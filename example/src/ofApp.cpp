@@ -7,12 +7,6 @@ void ofApp::setup()
 	auto t = tweens.addTween(&c, c, ofColor(0, 255, 230, 255), 1000, 100, Tween::Ease::Bounce::Out)->yoyo()->loop();
 	
 	t->setOnComplete(onComplete);
-	
-	
-	//	for(int i=0; i<100; i++)
-	//	{
-	//		tweens.addTween(&c, c, ofColor(ofRandom(250), ofRandom(250), ofRandom(250), 255), 100, 110 * i, Tween::Ease::Sinusoidal::InOut);//->yoyo()->loop();
-	//	}
 }
 
 //--------------------------------------------------------------
