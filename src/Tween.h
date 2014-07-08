@@ -65,7 +65,7 @@ namespace Tween
 						state = TWEEN_STOPPED;
 						
 						//callbacks
-						if(onComplete != NULL)	onComplete(this, value);
+						if(onComplete != NULL)	onComplete(this);
 						if(bYoYo)	swap(startVal, endVal);
 						if(bLoop)	restart();
 					}
@@ -75,7 +75,7 @@ namespace Tween
 						updateValue(t);
 						
 						//on update callback
-						if(onUpdate != NULL)	onUpdate(this, value);
+						if(onUpdate != NULL)	onUpdate(this);
 					}
 					break;
 					
@@ -88,7 +88,7 @@ namespace Tween
 						
 						updateValue(t);
 						
-						if(onStart != NULL)	onStart(this, value);
+						if(onStart != NULL)	onStart(this);
 					}
 					
 					break;
@@ -172,10 +172,28 @@ namespace Tween
 			return state;
 		}
 		
+		Tween<T>* setOnUpdate(void (*_onUpdate)(void* _tween))
+		{
+			onUpdate = _onUpdate;
+			return this;
+		}
+		
+		Tween<T>* setOnStart(void (*_onStart)(void* _tween))
+		{
+			onStart = _onStart;
+			return this;
+		}
+		
+		Tween<T>* setOnComplete(void (*_onComplete)(void* _tween))
+		{
+			onComplete = _onComplete;
+			return this;
+		}
+		
 	public:
-		void (*onStart)(void* _tween, T _value);
-		void (*onUpdate)(void* _tween, T _value);
-		void (*onComplete)(void* _tween, T _value);
+		void (*onStart)(void* _tween);
+		void (*onUpdate)(void* _tween);
+		void (*onComplete)(void* _tween);
 		
 		bool bKill;
 		float (*ease)(float);

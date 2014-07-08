@@ -4,7 +4,9 @@
 void ofApp::setup()
 {
 	c.set(70, 255, 90);
-	tweens.addTween(&c, c, ofColor(0, 255, 230, 255), 1000, 100, Tween::Ease::Bounce::Out)->yoyo()->loop();
+	auto t = tweens.addTween(&c, c, ofColor(0, 255, 230, 255), 1000, 100, Tween::Ease::Bounce::Out)->yoyo()->loop();
+	
+	t->setOnComplete(onComplete);
 	
 	
 	//	for(int i=0; i<100; i++)

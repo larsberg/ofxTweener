@@ -19,7 +19,11 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+			
+	static void onComplete(void* tween)
+	{
+		cout << "completed!" << endl;
+	}
 	
 	Tween::TweenManager tweens;
 	
