@@ -18,6 +18,8 @@ namespace Tween
 		TWEEN_PAUSED = 2,
 		TWEEN_IDLE = 3
 	};
+    
+    class TweenManager;
 	
 	template<class T>
 	static T lerp(T a, T b, float k)
@@ -25,30 +27,31 @@ namespace Tween
 		//return	a + k * (b - a);//this was giving an error for ofColor...
 		return a * (1. - k) + b * k;
 	}
-	
-	template<class T>
-	class Tween
-	{
+    
+    class Tween{
+		
+	protected:
+		float startTime, endTime, progress;
+		bool bLoop, bYoYo;
+		
+		TweenState state;
+        vector<Tween*> _chainedTweens;
+		
+		virtual void updateValue(float t){}
+        
+        virtual void reachedEnd(){}
+		
 	public:
-		Tween(T* _target, T _startVal, T _endVal, float _startTime, float _endTime):
-		target(_target),
-		startVal(_startVal),
-		endVal(_endVal),
-		startTime(_startTime),
-		endTime(_endTime),
-		onStart(NULL),
-		onUpdate(NULL),
-		onComplete(NULL),
-		state(TWEEN_IDLE),
-		progress(0),
-		bLoop(false),
-		bYoYo(false),
-		bKill(true)
-		{}
+		void (*onStart)(void* _tween);
+		void (*onUpdate)(void* _tween);
+		void (*onComplete)(void* _tween);
 		
-		~Tween()
-		{}
+		bool bKill;
+		float (*ease)(float);
 		
+		//this can be handy for custom callbacks
+		void* userPointer;
+        
 		void update(float t)
 		{
 			//handle states
@@ -58,16 +61,7 @@ namespace Tween
 					if(t >= endTime)
 					{
 						//STOP it
-						progress = 1;
-						value = endVal;
-						if(target != NULL)	*target = value;
-						
-						state = TWEEN_STOPPED;
-						
-						//callbacks
-						if(onComplete != NULL)	onComplete(this);
-						if(bYoYo)	swap(startVal, endVal);
-						if(bLoop)	restart();
+                        reachedEnd();
 					}
 					else
 					{
@@ -106,20 +100,13 @@ namespace Tween
 			}
 		}
 		
-		void updateValue(float t)
-		{
-			progress = ofMap(t, startTime, endTime, 0, 1, true);
-			value = lerp(startVal, endVal, ease(progress));
-			if(target != NULL)	*target = value;
-		}
-		
-		Tween<T>* pause()
+		Tween* pause()
 		{
 			state = TWEEN_PAUSED;
 			return this;
 		}
 		
-		Tween<T>* play()
+		Tween* play()
 		{
 			if (state == TWEEN_PAUSED)
 			{
@@ -133,7 +120,7 @@ namespace Tween
 			return this;
 		}
 		
-		Tween<T>* restart()
+		Tween* restart()
 		{
 			float duration = endTime - startTime;
 			startTime = ofGetElapsedTimeMillis();
@@ -144,70 +131,113 @@ namespace Tween
 			return this;
 		}
 		
-		Tween<T>* loop(bool _bLoop=true)
+		Tween* loop(bool _bLoop=true)
 		{
 			bLoop = _bLoop;
 			return this;
 		}
 		
-		Tween<T>* yoyo(bool _bYoYo=true)
+		Tween* yoyo(bool _bYoYo=true)
 		{
 			bYoYo = _bYoYo;
 			return this;
 		}
 		
-		Tween<T>* setEase(float (*e)(float))
+		Tween* setEase(float (*e)(float))
 		{
 			ease = e;
 			return this;
 		}
-		
-		T* getTarget()
-		{
-			return target;
-		}
+        
+        virtual void* getTarget(){return NULL;}
 		
 		TweenState getState()
 		{
 			return state;
 		}
 		
-		Tween<T>* setOnUpdate(void (*_onUpdate)(void* _tween))
+		Tween* setOnUpdate(void (*_onUpdate)(void* _tween))
 		{
 			onUpdate = _onUpdate;
 			return this;
 		}
 		
-		Tween<T>* setOnStart(void (*_onStart)(void* _tween))
+		Tween* setOnStart(void (*_onStart)(void* _tween))
 		{
 			onStart = _onStart;
 			return this;
 		}
 		
-		Tween<T>* setOnComplete(void (*_onComplete)(void* _tween))
+		Tween* setOnComplete(void (*_onComplete)(void* _tween))
 		{
 			onComplete = _onComplete;
 			return this;
 		}
-		
-	public:
-		void (*onStart)(void* _tween);
-		void (*onUpdate)(void* _tween);
-		void (*onComplete)(void* _tween);
-		
-		bool bKill;
-		float (*ease)(float);
-		
-		//this can be handy for custom callbacks
-		void* userPointer;
-		
+        
+        Tween* addChained(Tween* tween){
+            _chainedTweens.push_back(tween);
+            return this;
+        }
+        
+        Tween* clearChained(){
+            _chainedTweens.clear();
+            return this;
+        }
+    };
+    
+	template<class T>
+    class TweenItem : public Tween
+	{
+        friend TweenManager;
 	protected:
-		float startTime, endTime, progress;
 		T startVal, endVal, value;
 		T* target;
-		bool bLoop, bYoYo;
+        
+		TweenItem(T* _target, T _startVal, T _endVal, float _startTime, float _endTime)
+		{
+            target = _target;
+            startVal = _startVal;
+            endVal = _endVal;
+            startTime = _startTime;
+            endTime = _endTime;
+            onStart = NULL;
+            onUpdate = NULL;
+            onComplete = NULL;
+            state = TWEEN_IDLE;
+            progress = 0;
+            bLoop = false;
+            bYoYo = false;
+            bKill = true;
+        }
+        
+        void reachedEnd(){
+            progress = 1;
+            value = endVal;
+            if(target != NULL)	*target = value;
+            
+            state = TWEEN_STOPPED;
+            
+            //callbacks
+            if(onComplete != NULL)	onComplete(this);
+            if(bYoYo)	swap(startVal, endVal);
+            if(bLoop)	restart();
+        }
 		
-		TweenState state;
+		void updateValue(float t)
+		{
+			progress = ofMap(t, startTime, endTime, 0, 1, true);
+			value = lerp(startVal, endVal, ease(progress));
+			if(target != NULL)	*target = value;
+		}
+        
+    public:
+		~TweenItem()
+		{}
+		
+        void* getTarget()
+        {
+            return (void*)target;
+        }
 	};
 	
 	
@@ -231,43 +261,22 @@ namespace Tween
 		void update( float t = ofGetElapsedTimeMillis() );
 		
 		//creating new tweens
-		Tween<float>* addTween( float* target, float startVal, float endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween<int>* addTween( int* target, int startVal, int endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween<ofVec2f>* addTween( ofVec2f* target, ofVec2f startVal, ofVec2f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween<ofVec3f>* addTween( ofVec3f* target, ofVec3f startVal, ofVec3f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween<ofVec4f>* addTween( ofVec4f* target, ofVec4f startVal, ofVec4f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween<ofFloatColor>* addTween( ofFloatColor* target, ofFloatColor startVal, ofFloatColor endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween<ofColor>* addTween( ofColor* target, ofColor startVal, ofColor endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
+		Tween* addTween( float* target, float startVal, float endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
+		Tween* addTween( int* target, int startVal, int endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
+		Tween* addTween( ofVec2f* target, ofVec2f startVal, ofVec2f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
+		Tween* addTween( ofVec3f* target, ofVec3f startVal, ofVec3f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
+		Tween* addTween( ofVec4f* target, ofVec4f startVal, ofVec4f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
+		Tween* addTween( ofFloatColor* target, ofFloatColor startVal, ofFloatColor endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
+		Tween* addTween( ofColor* target, ofColor startVal, ofColor endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
 		
 		//adding existing tweens
-		Tween<int>* addTween(Tween<int>* t);
-		Tween<float>* addTween(Tween<float>* t);
-		Tween<double>* addTween(Tween<double>* t);
-		Tween<ofVec2f>* addTween(Tween<ofVec2f>* t);
-		Tween<ofVec3f>* addTween(Tween<ofVec3f>* t);
-		Tween<ofVec4f>* addTween(Tween<ofVec4f>* t);
-		Tween<ofColor>* addTween(Tween<ofColor>* t);
-		Tween<ofFloatColor>* addTween(Tween<ofFloatColor>* t);
+		Tween* addTween(Tween* t);
 		
 		//removing tweens
-		void remove(Tween<int>* t);
-		void remove(Tween<float>* t);
-		void remove(Tween<double>* t);
-		void remove(Tween<ofVec2f>* t);
-		void remove(Tween<ofVec3f>* t);
-		void remove(Tween<ofVec4f>* t);
-		void remove(Tween<ofColor>* t);
-		void remove(Tween<ofFloatColor>* t);
+		void remove(Tween* t);
 		
 		//getting tweens by target
-		Tween<int>* getTween(int& target);
-		Tween<float>* getTween(float& target);
-		Tween<double>* getTween(double& target);
-		Tween<ofVec2f>* getTween(ofVec2f& target);
-		Tween<ofVec3f>* getTween(ofVec3f& target);
-		Tween<ofVec4f>* getTween(ofVec4f& target);
-		Tween<ofColor>* getTween(ofColor& target);
-		Tween<ofFloatColor>* getTween(ofFloatColor& target);
+		Tween* getTween(void* target);
 		
 	private:
 		
@@ -282,8 +291,7 @@ namespace Tween
 			tweenVector.clear();
 		}
 		
-		template <class T>
-		void updateTweenVector(vector<T*>& v, float time)
+		void updateTweenVector(vector<Tween*>& v, float time)
 		{
 			if(v.size() == 0)	return;
 			
@@ -312,15 +320,14 @@ namespace Tween
 		}
 		
 		//adding tweens
-		template <class T>
-		Tween<T>* addTween(vector< Tween<T>* >& v, Tween<T>* t)
+		Tween* addTween(vector< Tween* >& v, Tween* t)
 		{
 			v.push_back(t);
 			return t;
 		}
 		
 		template <class T>
-		Tween<T>* addTween(vector< Tween<T>* >& v,
+		Tween* addTween(vector< Tween* >& v,
 						   T* target,
 						   T startVal,
 						   T endVal,
@@ -328,15 +335,14 @@ namespace Tween
 						   float endTime,
 						   float (*ease)(float) = Ease::Linear )
 		{
-			auto t = new Tween<T>(target, startVal, endVal, startTime, endTime);
+			auto t = new TweenItem<T>(target, startVal, endVal, startTime, endTime);
 			t->setEase(ease);
 			
 			return addTween(v, t);
 		}
 		
 		//REMOVING TWEENS
-		template <class T>
-		void removeFromVector(vector<T*>& v, T* t, bool bDelete = true)
+		void removeFromVector(vector<Tween*>& v, Tween* t, bool bDelete = true)
 		{
 			auto tIt = find (v.begin(), v.end(), t);
 			if(tIt != v.end())
@@ -347,8 +353,7 @@ namespace Tween
 		}
 		
 		//find tweens by target
-		template <class T>
-		Tween<T>* findTweenByTarget(vector<Tween<T>*>& v, T& t)
+		Tween* findTweenByTarget(vector<Tween*>& v, void* t)
 		{
 			for(auto& it: v)
 			{
@@ -362,13 +367,6 @@ namespace Tween
 		}
 		
 		// tween vectors
-		vector< Tween<int>* > tweensi;
-		vector< Tween<float>* > tweensf;
-		vector< Tween<double>* > tweensd;
-		vector< Tween<ofVec2f>* > tweensVec2f;
-		vector< Tween<ofVec3f>* > tweensVec3f;
-		vector< Tween<ofVec4f>* > tweensVec4f;
-		vector< Tween<ofColor>* > tweensColor;
-		vector< Tween<ofFloatColor>* > tweensColorf;
+		vector< Tween* > tweens;
 	};
 }
