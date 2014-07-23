@@ -29,17 +29,26 @@ namespace Tween
 	}
     
     class Tween{
-		
+		friend TweenManager;
+    private:
+        float startTime, endTime;
 	protected:
-		float startTime, endTime, progress;
-		bool bLoop, bYoYo;
+        float duration, delay, addedTime;
+		float progress;
+		bool bLoop, bYoYo, bFinished;
 		
 		TweenState state;
         vector<Tween*> _chainedTweens;
 		
-		virtual void updateValue(float t){}
+		virtual void updateValue(float start_t, float end_t, float t){}
         
         virtual void reachedEnd(){}
+        
+        void added(float currentTime){
+            addedTime = currentTime;
+            startTime = currentTime + delay;
+            endTime = startTime + duration;
+        }
 		
 	public:
 		void (*onStart)(void* _tween);
@@ -54,6 +63,7 @@ namespace Tween
         
 		void update(float t)
 		{
+            bFinished = false;
 			//handle states
 			switch (state)
 			{
@@ -62,11 +72,12 @@ namespace Tween
 					{
 						//STOP it
                         reachedEnd();
+                        bFinished = true;
 					}
 					else
 					{
 						//UPDATE it
-						updateValue(t);
+						updateValue(startTime, endTime, t);
 						
 						//on update callback
 						if(onUpdate != NULL)	onUpdate(this);
@@ -80,7 +91,7 @@ namespace Tween
 					{
 						state = TWEEN_STARTED;
 						
-						updateValue(t);
+						updateValue(startTime, endTime, t);
 						
 						if(onStart != NULL)	onStart(this);
 					}
@@ -193,13 +204,13 @@ namespace Tween
 		T startVal, endVal, value;
 		T* target;
         
-		TweenItem(T* _target, T _startVal, T _endVal, float _startTime, float _endTime)
+		TweenItem(T* _target, T _startVal, T _endVal, float _delay, float _duration)
 		{
             target = _target;
             startVal = _startVal;
             endVal = _endVal;
-            startTime = _startTime;
-            endTime = _endTime;
+            delay = _delay;
+            duration = _duration;
             onStart = NULL;
             onUpdate = NULL;
             onComplete = NULL;
@@ -208,6 +219,7 @@ namespace Tween
             bLoop = false;
             bYoYo = false;
             bKill = true;
+            bFinished = false;
         }
         
         void reachedEnd(){
@@ -223,9 +235,9 @@ namespace Tween
             if(bLoop)	restart();
         }
 		
-		void updateValue(float t)
+		void updateValue(float start_t, float end_t, float t)
 		{
-			progress = ofMap(t, startTime, endTime, 0, 1, true);
+			progress = ofMap(t, start_t, end_t, 0, 1, true);
 			value = lerp(startVal, endVal, ease(progress));
 			if(target != NULL)	*target = value;
 		}
@@ -259,112 +271,34 @@ namespace Tween
 		void update(ofEventArgs& e);
 		
 		void update( float t = ofGetElapsedTimeMillis() );
-		
-		//creating new tweens
-		Tween* addTween( float* target, float startVal, float endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween* addTween( int* target, int startVal, int endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween* addTween( ofVec2f* target, ofVec2f startVal, ofVec2f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween* addTween( ofVec3f* target, ofVec3f startVal, ofVec3f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween* addTween( ofVec4f* target, ofVec4f startVal, ofVec4f endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween* addTween( ofFloatColor* target, ofFloatColor startVal, ofFloatColor endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
-		Tween* addTween( ofColor* target, ofColor startVal, ofColor endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear );
+        
+        template<class T>
+        static Tween* makeTween( T* target, T startVal, T endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear ){
+			auto t = new TweenItem<T>(target, startVal, endVal, ofGetElapsedTimeMillis() + delay, ofGetElapsedTimeMillis() + delay + duration);
+			t->setEase(ease);
+            return t;
+        };
 		
 		//adding existing tweens
-		Tween* addTween(Tween* t);
+		Tween* addTween(Tween* t){
+            tweens.push_back(t);
+            t->added(ofGetElapsedTimeMillis());
+            return t;
+        }
+        
+        template<class T>
+        Tween* addTween( T* target, T startVal, T endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear ){
+            Tween* t = TweenManager::makeTween(target, startVal, endVal, duration, delay, ease);
+            return addTween(t);
+        }
 		
 		//removing tweens
-		void remove(Tween* t);
+		void remove(Tween* t, bool bDelete = true);
 		
 		//getting tweens by target
 		Tween* getTween(void* target);
 		
 	private:
-		
-		//tween vectors
-		template <class T>
-		void clearTweenVector(vector<T*>& tweenVector)
-		{
-			for(auto &it: tweenVector)
-			{
-				delete it;
-			}
-			tweenVector.clear();
-		}
-		
-		void updateTweenVector(vector<Tween*>& v, float time)
-		{
-			if(v.size() == 0)	return;
-			
-			//we want the most recent tweens to superceed any previous so we need to loop twice
-			//first to set the values
-			vector<int> dead;
-			int i=0;
-			for(auto &it: v)
-			{
-				it->update(time);
-				
-				if(it->getState() == TWEEN_STOPPED && it->bKill)
-				{
-					dead.push_back(i);
-				}
-				
-				i++;
-			}
-			
-			//bury the dead
-			for(int i=dead.size()-1; i>=0; i--)
-			{
-				delete v[dead[i]];
-				v.erase(v.begin() + dead[i]);
-			}
-		}
-		
-		//adding tweens
-		Tween* addTween(vector< Tween* >& v, Tween* t)
-		{
-			v.push_back(t);
-			return t;
-		}
-		
-		template <class T>
-		Tween* addTween(vector< Tween* >& v,
-						   T* target,
-						   T startVal,
-						   T endVal,
-						   float startTime,
-						   float endTime,
-						   float (*ease)(float) = Ease::Linear )
-		{
-			auto t = new TweenItem<T>(target, startVal, endVal, startTime, endTime);
-			t->setEase(ease);
-			
-			return addTween(v, t);
-		}
-		
-		//REMOVING TWEENS
-		void removeFromVector(vector<Tween*>& v, Tween* t, bool bDelete = true)
-		{
-			auto tIt = find (v.begin(), v.end(), t);
-			if(tIt != v.end())
-			{
-				if(bDelete)	delete t;
-				v.erase( tIt );
-			}
-		}
-		
-		//find tweens by target
-		Tween* findTweenByTarget(vector<Tween*>& v, void* t)
-		{
-			for(auto& it: v)
-			{
-				if(it->getTarget() == &t)
-				{
-					return it;
-				}
-			}
-			
-			return NULL;
-		}
 		
 		// tween vectors
 		vector< Tween* > tweens;

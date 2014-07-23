@@ -24,7 +24,11 @@ namespace Tween
 	
 	void TweenManager::clear()
 	{
-		clearTweenVector( tweens );
+        for(auto &it: tweens)
+        {
+            delete it;
+        }
+        tweens.clear();
 	}
 	void TweenManager::update(ofEventArgs& e)
 	{
@@ -33,53 +37,58 @@ namespace Tween
 	
 	void TweenManager::update( float t)
 	{
-		updateTweenVector( tweens, t );
+        if(tweens.size() == 0)	return;
+        
+        //we want the most recent tweens to superceed any previous so we need to loop twice
+        //first to set the values
+        vector<int> dead;
+        int i=0;
+        for(auto &it: tweens)
+        {
+            it->update(t);
+            
+            if(it->getState() == TWEEN_STOPPED && it->bKill)
+            {
+                dead.push_back(i);
+            }
+            if (it->bFinished){
+                for(auto &it2:it->_chainedTweens){
+                    addTween(it2);
+                }
+            }
+            
+            i++;
+        }
+        
+        //bury the dead
+        for(int i=dead.size()-1; i>=0; i--)
+        {
+            delete tweens[dead[i]];
+            tweens.erase(tweens.begin() + dead[i]);
+        }
 	}
 	
-	
-	//ADDING NEW TWEENS
-	Tween* TweenManager::addTween( float* target, float startVal, float endVal, float duration, float delay, float (*ease)(float))
+	void TweenManager::remove(Tween* t, bool bDelete)
 	{
-		return addTween( tweens, target, startVal, endVal, ofGetElapsedTimeMillis()+delay, ofGetElapsedTimeMillis()+delay+duration, ease);
+        auto tIt = find (tweens.begin(), tweens.end(), t);
+        if(tIt != tweens.end())
+        {
+            if(bDelete)	delete t;
+            tweens.erase( tIt );
+        }
 	}
-	Tween* TweenManager::addTween( int* target, int startVal, int endVal, float duration, float delay, float (*ease)(float))
-	{
-		return addTween( tweens, target, startVal, endVal, ofGetElapsedTimeMillis()+delay, ofGetElapsedTimeMillis()+delay+duration, ease);
-	}
-	Tween* TweenManager::addTween( ofVec2f* target, ofVec2f startVal, ofVec2f endVal, float duration, float delay, float (*ease)(float))
-	{
-		return addTween( tweens, target, startVal, endVal, ofGetElapsedTimeMillis()+delay, ofGetElapsedTimeMillis()+delay+duration, ease);
-	}
-	Tween* TweenManager::addTween( ofVec3f* target, ofVec3f startVal, ofVec3f endVal, float duration, float delay, float (*ease)(float))
-	{
-		return addTween( tweens, target, startVal, endVal, ofGetElapsedTimeMillis()+delay, ofGetElapsedTimeMillis()+delay+duration, ease);
-	}
-	Tween* TweenManager::addTween( ofVec4f* target, ofVec4f startVal, ofVec4f endVal, float duration, float delay, float (*ease)(float))
-	{
-		return addTween( tweens, target, startVal, endVal, ofGetElapsedTimeMillis()+delay, ofGetElapsedTimeMillis()+delay+duration, ease);
-	}
-	Tween* TweenManager::addTween( ofFloatColor* target, ofFloatColor startVal, ofFloatColor endVal, float duration, float delay, float (*ease)(float))
-	{
-		return addTween( tweens, target, startVal, endVal, ofGetElapsedTimeMillis()+delay, ofGetElapsedTimeMillis()+delay+duration, ease);
-	}
-	Tween* TweenManager::addTween( ofColor* target, ofColor startVal, ofColor endVal, float duration, float delay, float (*ease)(float))
-	{
-		return addTween( tweens, target, startVal, endVal, ofGetElapsedTimeMillis()+delay, ofGetElapsedTimeMillis()+delay+duration, ease);
-	}
-	
-	
-	Tween* TweenManager::addTween(Tween* t){	return addTween(tweens, t);}
-	
-	void TweenManager::remove(Tween* t)
-	{
-		removeFromVector(tweens, t);
-	}
-	
-	
 	
 	Tween* TweenManager::getTween(void* target)
 	{
-		return findTweenByTarget(tweens, target);
+        for(auto& it: tweens)
+        {
+            if(it->getTarget() == &target)
+            {
+                return it;
+            }
+        }
+        
+        return NULL;
 	}
 
 }
