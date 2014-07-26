@@ -274,7 +274,7 @@ namespace Tween
         
         template<class T>
         static Tween* makeTween( T* target, T startVal, T endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear ){
-			auto t = new TweenItem<T>(target, startVal, endVal, ofGetElapsedTimeMillis() + delay, ofGetElapsedTimeMillis() + delay + duration);
+			auto t = new TweenItem<T>(target, startVal, endVal, delay, duration);
 			t->setEase(ease);
             return t;
         };
