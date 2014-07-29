@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 */obj
 */bin/*
 *.layout
@@ -22,4 +22,4 @@ Bullet-src/
 .DS_Store
 *.app
 *.xcuserdatad
->>>>>>> pr/1
+
