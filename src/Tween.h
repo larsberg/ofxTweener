@@ -140,7 +140,7 @@ namespace Tween
 		Tween* restart()
 		{
 			float duration = endTime - startTime;
-			startTime = ofGetElapsedTimeMillis();
+			startTime = bLoop ? endTime : ofGetElapsedTimeMillis();
 			endTime = startTime + duration;
 			
 			state = TWEEN_IDLE;

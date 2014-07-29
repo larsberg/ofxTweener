@@ -4,7 +4,7 @@
 void ofApp::setup()
 {
 	c.set(70, 255, 90);
-	auto t = tweens.addTween(&c, c, ofColor(0, 255, 230, 255), 1000, 100, Tween::Ease::Bounce::Out)->yoyo()->loop();
+	auto t = tweens.addTween(&c, ofColor(0,0,0, 10), ofColor(255, 10), 3000, 100, Tween::Ease::Bounce::Out)->yoyo()->loop();
 	t->setOnComplete(onComplete);
 	
 	//ball
@@ -12,6 +12,8 @@ void ofApp::setup()
 	tweens.addTween(&position.y, -200.f, 200.f, 500, 250, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop();
 	tweens.addTween(&ballColor, ofColor(255,255,0), ofColor(0,255,255), 3000)->loop();
 
+	ofSetBackgroundAuto(false);
+	ofSetDepthTest(true);
 }
 
 //--------------------------------------------------------------
@@ -22,12 +24,22 @@ void ofApp::update()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-	ofBackground(c);
+//	ofBackground(c);
+	glClear( GL_DEPTH_BUFFER_BIT );
+	
+	ofSetDepthTest(false);
+	ofBackgroundGradient(c, ofFloatColor(0,0,0,.1));
 	
 	camera.begin();
 	
+	ofSetDepthTest(true);
+	ofNoFill();
+	ofSetColor(0, 0, 0, 10);
+	ofCircle(0, 0, 200);
+	
+	ofFill();
 	ofSetColor(ballColor);
-	ofDrawSphere(position, 100);
+	ofDrawSphere(position, 15);
 	
 	camera.end();
 	
