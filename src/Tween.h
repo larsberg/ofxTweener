@@ -8,9 +8,12 @@
 
 #include "ofMain.h"
 #include "Easings.h"
+#include "TweenEventArgs.h"
 
 namespace Tween
 {
+    class TweenManager;
+    
 	enum TweenState
 	{
 		TWEEN_STARTED = 0,
@@ -18,8 +21,6 @@ namespace Tween
 		TWEEN_PAUSED = 2,
 		TWEEN_IDLE = 3
 	};
-    
-    class TweenManager;
 	
 	template<class T>
 	static T lerp(T a, T b, float k)
@@ -54,6 +55,10 @@ namespace Tween
 		void (*onStart)(void* _tween);
 		void (*onUpdate)(void* _tween);
 		void (*onComplete)(void* _tween);
+        ofEvent<TweenEventArgs> onCompleteEvent;
+        ofEvent<TweenEventArgs> onUpdateEvent;
+        ofEvent<TweenEventArgs> onStartEvent;
+        TweenEventArgs* eventArgs;
 		
 		bool bKill;
 		float (*ease)(float);
@@ -81,6 +86,7 @@ namespace Tween
 						
 						//on update callback
 						if(onUpdate != NULL)	onUpdate(this);
+                        ofNotifyEvent(onUpdateEvent, *eventArgs, this);
 					}
 					break;
 					
@@ -90,10 +96,10 @@ namespace Tween
 					if(startTime <= t)
 					{
 						state = TWEEN_STARTED;
-						
-						updateValue(startTime, endTime, t);
+                        updateValue(startTime, endTime, t);
 						
 						if(onStart != NULL)	onStart(this);
+                        ofNotifyEvent(onStartEvent, *eventArgs, this);
 					}
 					
 					break;
@@ -185,6 +191,24 @@ namespace Tween
 			return this;
 		}
         
+        template <typename ArgumentsType, class ListenerClass>
+        Tween* addUpdateListener(ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+            ofAddListener(onUpdateEvent, listener, listenerMethod, prio);
+            return this;
+        }
+        
+        template <typename ArgumentsType, class ListenerClass>
+        Tween* addStartListener(ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+            ofAddListener(onStartEvent, listener, listenerMethod, prio);
+            return this;
+        }
+        
+        template <typename ArgumentsType, class ListenerClass>
+        Tween* addCompleteListener(ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+            ofAddListener(onCompleteEvent, listener, listenerMethod, prio);
+            return this;
+        }
+        
         Tween* addChained(Tween* tween){
             _chainedTweens.push_back(tween);
             return this;
@@ -220,6 +244,7 @@ namespace Tween
             bYoYo = false;
             bKill = true;
             bFinished = false;
+            eventArgs = new TweenEventArgs();
         }
         
         void reachedEnd(){
@@ -231,6 +256,7 @@ namespace Tween
             
             //callbacks
             if(onComplete != NULL)	onComplete(this);
+            ofNotifyEvent(onCompleteEvent, *eventArgs, this);
             if(bYoYo)	swap(startVal, endVal);
             if(bLoop)	restart();
         }
@@ -251,56 +277,6 @@ namespace Tween
             return (void*)target;
         }
 	};
-	
-	
-	
-	/**
-	 *
-	 * Tween manger for adding, updating and removing tweens
-	 *
-	 */
-	class TweenManager
-	{
-	public:
-		TweenManager();
-		
-		~TweenManager();
-		
-		void clear();
-		
-		void update(ofEventArgs& e);
-		
-		void update( float t = ofGetElapsedTimeMillis() );
-        
-        template<class T>
-        static Tween* makeTween( T* target, T startVal, T endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear ){
-			auto t = new TweenItem<T>(target, startVal, endVal, delay, duration);
-			t->setEase(ease);
-            return t;
-        };
-		
-		//adding existing tweens
-		Tween* addTween(Tween* t){
-            tweens.push_back(t);
-            t->added(ofGetElapsedTimeMillis());
-            return t;
-        }
-        
-        template<class T>
-        Tween* addTween( T* target, T startVal, T endVal, float duration, float delay=0, float (*ease)(float) = Ease::Linear ){
-            Tween* t = TweenManager::makeTween(target, startVal, endVal, duration, delay, ease);
-            return addTween(t);
-        }
-		
-		//removing tweens
-		void remove(Tween* t, bool bDelete = true);
-		
-		//getting tweens by target
-		Tween* getTween(void* target);
-		
-	private:
-		
-		// tween vectors
-		vector< Tween* > tweens;
-	};
 }
+
+#include "TweenManager.h"
