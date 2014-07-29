@@ -3,14 +3,29 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
+	//background
 	c.set(70, 255, 90);
-	auto t = tweens.addTween(&c, ofColor(0,0,0, 10), ofColor(255, 10), 3000, 100, Tween::Ease::Bounce::Out)->yoyo()->loop();
+	auto t = tweens.addTween(&c, ofColor(0,0,0, 5), ofColor(255, 5), 3000, 100, Tween::Ease::Bounce::Out)->yoyo()->loop();
 	t->setOnComplete(onComplete);
 	
-	//ball
-	tweens.addTween(&position.x, -200.f, 200.f, 500, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop();
-	tweens.addTween(&position.y, -200.f, 200.f, 500, 250, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop();
-	tweens.addTween(&ballColor, ofColor(255,255,0), ofColor(0,255,255), 3000)->loop();
+	//balls
+	colors.resize(20);
+	positions.resize(colors.size());
+	
+	for(int i=0; i<positions.size(); i++)
+	{
+		//position
+		float speed = ofRandom(200, 1000);
+		positions[i].x = i * 80 - (positions.size() * .5 * 80.);
+		tweens.addTween(&positions[i].y, -200.f, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop();
+		tweens.addTween(&positions[i].z, -200.f, 200.f, speed, speed * .5, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop();
+		
+		//color
+		tweens.addTween(&colors[i],
+						ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)),
+						ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)),
+						ofRandom(400, 4000))->loop();
+	}
 
 	ofSetBackgroundAuto(false);
 	ofSetDepthTest(true);
@@ -24,22 +39,16 @@ void ofApp::update()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-//	ofBackground(c);
 	glClear( GL_DEPTH_BUFFER_BIT );
-	
-	ofSetDepthTest(false);
 	ofBackgroundGradient(c, ofFloatColor(0,0,0,.1));
 	
 	camera.begin();
 	
-	ofSetDepthTest(true);
-	ofNoFill();
-	ofSetColor(0, 0, 0, 10);
-	ofCircle(0, 0, 200);
-	
-	ofFill();
-	ofSetColor(ballColor);
-	ofDrawSphere(position, 15);
+	for(int i=0; i<positions.size(); i++)
+	{
+		ofSetColor(colors[i]);
+		ofDrawSphere(positions[i], 15);
+	}
 	
 	camera.end();
 	

@@ -32,4 +32,7 @@ class ofApp : public ofBaseApp{
 	ofVec3f position;
 	
 	ofEasyCam camera;
+	
+	vector<ofColor> colors;
+	vector<ofVec3f> positions;
 };
