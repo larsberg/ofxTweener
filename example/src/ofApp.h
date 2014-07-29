@@ -22,12 +22,14 @@ class ofApp : public ofBaseApp{
 			
 	static void onComplete(void* tween)
 	{
-		cout << "completed!" << endl;
+		cout << "tween has completed!" << endl;
 	}
 	
 	Tween::TweenManager tweens;
 	
 	float f0;
+	ofColor c, ballColor;
+	ofVec3f position;
 	
-	ofColor c;
+	ofEasyCam camera;
 };
