@@ -22,4 +22,10 @@ Bullet-src/
 .DS_Store
 *.app
 *.xcuserdatad
+*.xcuserstate
 
+
+
+*.xcuserstate
+
+example/example.xcodeproj/project.xcworkspace/xcuserdata/laserstorm.xcuserdatad/UserInterfaceState.xcuserstate

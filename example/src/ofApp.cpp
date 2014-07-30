@@ -28,16 +28,16 @@ void ofApp::setup()
 		tweens.addTween(&colors[i],
 						ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255),
 						ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255),
-						ofRandom(400, 4000))->loop()->yoyo();
+						ofRandom(400, 2000))->loop()->yoyo();
 	}
 	
 	//tween curve
-	crv = new Tween::TweenCurve<float>(&f1, 0.f, 0.f, 0, 1000, Tween::Ease::Sinusoidal::InOut);
+	crv = new Tween::TweenCurve<float>(&f1, 0.f, -40.f, 0, 1000, Tween::Ease::Sinusoidal::InOut);
 	tweens.addTween(crv)->loop()->setOnUpdate(onUpdateFloatCurve);
 	
-	crv->addPoint(.25, -25., Tween::Ease::Cubic::In);
-	crv->addPoint(.5, 0., Tween::Ease::Cubic::Out);
 	crv->addPoint(.75, 50., Tween::Ease::Bounce::InOut);
+	crv->addPoint(.5, 0., Tween::Ease::Cubic::In);
+	crv->addPoint(.25, -25., Tween::Ease::Cubic::Out);
 	
 	//create a polyline for drawing to the screen
 	float step = 1. / (400-1);
