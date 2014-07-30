@@ -19,15 +19,22 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-			
+	
 	static void onComplete(void* tween)
 	{
 		cout << "tween has completed!" << endl;
 	}
 	
+	
+	static void onUpdateFloatCurve(void* tween)
+	{
+		auto t = (Tween::TweenCurve<float>*)tween;
+		cout << "tween is updating, value: " << t->getValue() << endl;
+	}
+	
 	Tween::TweenManager tweens;
 	
-	float f0;
+	float f0, f1;
 	ofColor c, ballColor;
 	ofVec3f position;
 	
@@ -35,4 +42,6 @@ class ofApp : public ofBaseApp{
 	
 	vector<ofColor> colors;
 	vector<ofVec3f> positions;
+	
+	ofPolyline curveLine;
 };
