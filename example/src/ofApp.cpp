@@ -28,7 +28,7 @@ void ofApp::setup()
 		tweens.addTween(&colors[i],
 						ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255),
 						ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255),
-						ofRandom(400, 4000))->loop();
+						ofRandom(400, 4000))->loop()->yoyo();
 	}
 	
 	//tween curve
@@ -39,6 +39,7 @@ void ofApp::setup()
 	crv->addPoint(.5, 0., Tween::Ease::Cubic::Out);
 	crv->addPoint(.75, 50., Tween::Ease::Bounce::InOut);
 	
+	//create a polyline for drawing to the screen
 	float step = 1. / (400-1);
 	for(int i=0; i<400; i++)
 	{
@@ -70,23 +71,23 @@ void ofApp::draw()
 	
 	camera.end();
 	
+	
+	//draw tween curve
 	ofPushMatrix();
 	ofTranslate(0, 50);
 	
+	//	background rectangle
 	ofSetColor(0, 0, 0, 30);
 	ofRect(0,-50,400,100);
 	
+	//	curve polyline
 	ofSetLineWidth(1);
 	ofSetColor(255, 100);
 	curveLine.draw();
 	
-	ofVec3f curvePoint;
-	curvePoint.x = ofMap(crv->getProgress(), 0, 1, 0, 400);
-	curvePoint.y = crv->getValue();
-	curvePoint.z = 10;
-	
+	//	draw a sphere at the current value
 	ofSetColor(255,255, 0);
-	ofDrawSphere(curvePoint, 4);
+	ofDrawSphere( crv->getProgress() * 400, crv->getValue(), 10, 4);
 	
 	ofPopMatrix();
 	
