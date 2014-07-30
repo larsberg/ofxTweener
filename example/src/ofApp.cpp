@@ -32,7 +32,7 @@ void ofApp::setup()
 	}
 	
 	//tween curve
-	auto crv = new Tween::TweenCurve<float>(&f1, 0.f, 20.f, 0, 10000, Tween::Ease::Sinusoidal::InOut);
+	crv = new Tween::TweenCurve<float>(&f1, 0.f, 0.f, 0, 1000, Tween::Ease::Sinusoidal::InOut);
 	tweens.addTween(crv)->loop()->setOnUpdate(onUpdateFloatCurve);
 	
 	crv->addPoint(.25, -25., Tween::Ease::Cubic::In);
@@ -79,6 +79,14 @@ void ofApp::draw()
 	ofSetLineWidth(1);
 	ofSetColor(255, 100);
 	curveLine.draw();
+	
+	ofVec3f curvePoint;
+	curvePoint.x = ofMap(crv->getProgress(), 0, 1, 0, 400);
+	curvePoint.y = crv->getValue();
+	curvePoint.z = 10;
+	
+	ofSetColor(255,255, 0);
+	ofDrawSphere(curvePoint, 4);
 	
 	ofPopMatrix();
 	

@@ -177,6 +177,11 @@ namespace Tween
 			return state;
 		}
 		
+		float getProgress()
+		{
+			return progress;
+		}
+		
 		Tween* setOnUpdate(void (*_onUpdate)(void* _tween))
 		{
 			onUpdate = _onUpdate;
@@ -287,6 +292,9 @@ namespace Tween
 		float (*ease)(float);
 	};
     
+	
+	
+	
 	template<class T>
     class TweenCurve : public Tween
 	{
@@ -299,8 +307,8 @@ namespace Tween
             startVal = _startVal;
             endVal = _endVal;
 			
-			addPoint(0, startVal);
-			addPoint(1, startVal);
+			addPoint(0, startVal,_ease);
+			addPoint(1, endVal,_ease);
 			
             delay = _delay;
             duration = _duration;
@@ -330,9 +338,6 @@ namespace Tween
 		
 		T sample(float _u)
 		{
-			
-//			T sampleValue = lerp(startVal, endVal, ease(u));
-			
 			//find our lower and upper values
 			ControlPoint<T>* lowVal = &controlPoints[0];
 			ControlPoint<T>* hiVal = &controlPoints[0];
@@ -343,7 +348,7 @@ namespace Tween
 				{
 					lowVal = &controlPoints[i];
 				}
-				if(controlPoints[i+1].u >= _u)
+				if( controlPoints[i+1].u >= _u)
 				{
 					hiVal = &controlPoints[i+1];
 					break;
@@ -351,8 +356,8 @@ namespace Tween
 			}
 			
 			//find a mapped sample and lerp our out value
-			float sampleVal = ofMap(_u, lowVal->u, hiVal->u, 0.f, 1.f, true );
-			return lerp(lowVal->value, hiVal->value, lowVal->ease(sampleVal));
+			float uVal = ofMap(_u, lowVal->u, hiVal->u, 0.f, 1.f, true );
+			return lerp(lowVal->value, hiVal->value, lowVal->ease(uVal));
 		}
 		
 	protected:
@@ -360,7 +365,6 @@ namespace Tween
 		
 		T startVal, endVal, value;
 		T* target;
-        
         
         void reachedEnd()
 		{
@@ -382,7 +386,6 @@ namespace Tween
 			value = sample(progress);
 			
 			if(target != NULL)	*target = value;
-
 		}
         
     public:

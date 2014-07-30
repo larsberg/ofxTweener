@@ -28,8 +28,11 @@ class ofApp : public ofBaseApp{
 	
 	static void onUpdateFloatCurve(void* tween)
 	{
-		auto t = (Tween::TweenCurve<float>*)tween;
-		cout << "tween is updating, value: " << t->getValue() << endl;
+		if(ofGetElapsedTimef() < 10)
+		{
+			auto t = (Tween::TweenCurve<float>*)tween;
+			cout << "tween is updating, value: " << t->getValue() << endl;
+		}
 	}
 	
 	Tween::TweenManager tweens;
@@ -43,5 +46,6 @@ class ofApp : public ofBaseApp{
 	vector<ofColor> colors;
 	vector<ofVec3f> positions;
 	
+	Tween::TweenCurve<float>* crv;
 	ofPolyline curveLine;
 };
