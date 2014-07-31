@@ -39,9 +39,7 @@ namespace Tween{
 		
 		//adding existing tweens
 		Tween* addTween(Tween* t){
-            tweens.push_back(t);
-            t->added(ofGetElapsedTimeMillis());
-            return t;
+            return addTween(t, ofGetElapsedTimeMillis());
         }
         
         template<class T>
@@ -58,7 +56,12 @@ namespace Tween{
 		
 	private:
 		
-		// tween vectors
-		vector< Tween* > tweens;
+		// tween list
+        list<Tween*> tweens;
+        Tween* addTween(Tween* t, float startTime){
+            tweens.push_back(t);
+            t->added(startTime);
+            return t;
+        }
 	};
 }

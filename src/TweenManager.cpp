@@ -44,28 +44,24 @@ namespace Tween
         //first to set the values
         vector<int> dead;
         int i=0;
-        for(auto &it: tweens)
-        {
-            it->update(t);
+        if (tweens.empty()){
+            return;
+        }
+        for(list<Tween*>::iterator it = tweens.begin(); it != tweens.end();){
+            (*it)->update(t);
             
-            if(it->getState() == TWEEN_STOPPED && it->bKill)
-            {
-                dead.push_back(i);
-            }
-            if (it->bFinished){
-                for(auto &it2:it->_chainedTweens){
-                    addTween(it2);
+            if ((*it)->bFinished){
+                for(auto &it2:(*it)->_chainedTweens){
+                    addTween(it2, (*it)->endTime);
                 }
             }
-            
-            i++;
-        }
-        
-        //bury the dead
-        for(int i=dead.size()-1; i>=0; i--)
-        {
-            delete tweens[dead[i]];
-            tweens.erase(tweens.begin() + dead[i]);
+            if((*it)->getState() == TWEEN_STOPPED && (*it)->bKill)
+            {
+                delete (*it);
+                it = tweens.erase(it);
+            } else {
+                it++;
+            }
         }
 	}
 	

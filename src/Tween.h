@@ -36,7 +36,7 @@ namespace Tween
 	protected:
         float duration, delay, addedTime;
 		float progress;
-		bool bLoop, bYoYo, bFinished;
+		bool bLoop, bYoYo, bFinished, bKill;
 		
 		TweenState state;
         vector<Tween*> _chainedTweens;
@@ -60,7 +60,6 @@ namespace Tween
         ofEvent<TweenEventArgs> onStartEvent;
         TweenEventArgs* eventArgs;
 		
-		bool bKill;
 		float (*ease)(float);
 		
 		//this can be handy for custom callbacks
@@ -136,10 +135,18 @@ namespace Tween
 			
 			return this;
 		}
+        
+        Tween* setDuration(float d){
+            if (state == TWEEN_STARTED){
+                endTime = startTime + d;
+            }
+            duration = d;
+            
+            return this;
+        }
 		
 		Tween* restart()
 		{
-			float duration = endTime - startTime;
 			startTime = bLoop ? endTime : ofGetElapsedTimeMillis();
 			endTime = startTime + duration;
 			
@@ -216,6 +223,16 @@ namespace Tween
         
         Tween* clearChained(){
             _chainedTweens.clear();
+            return this;
+        }
+        
+        Tween* dontDelete(){
+            bKill = false;
+            return this;
+        }
+        
+        Tween* doDelete(){
+            bKill = true;
             return this;
         }
     };
