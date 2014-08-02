@@ -8,11 +8,14 @@
 
 #include "ofMain.h"
 #include "Easings.h"
+#include "TweenEventArgs.h"
 
 #include <iostream>     // std::cout
 
 namespace Tween
 {
+    class TweenManager;
+    
 	enum TweenState
 	{
 		TWEEN_STARTED = 0,
@@ -20,8 +23,6 @@ namespace Tween
 		TWEEN_PAUSED = 2,
 		TWEEN_IDLE = 3
 	};
-    
-    class TweenManager;
 	
 	template<class T>
 	static T lerp(T a, T b, float k)
@@ -38,7 +39,7 @@ namespace Tween
 	protected:
         float duration, delay, addedTime;
 		float progress;
-		bool bLoop, bYoYo, bFinished;
+		bool bLoop, bYoYo, bFinished, bKill;
 		
 		TweenState state;
         vector<Tween*> _chainedTweens;
@@ -64,8 +65,11 @@ namespace Tween
 		void (*onStart)(void* _tween);
 		void (*onUpdate)(void* _tween);
 		void (*onComplete)(void* _tween);
+        ofEvent<TweenEventArgs> onCompleteEvent;
+        ofEvent<TweenEventArgs> onUpdateEvent;
+        ofEvent<TweenEventArgs> onStartEvent;
+        TweenEventArgs* eventArgs;
 		
-		bool bKill;
 		float (*ease)(float);
 		
 		//this can be handy in custom callbacks
@@ -91,6 +95,7 @@ namespace Tween
 						
 						//on update callback
 						if(onUpdate != NULL)	onUpdate(this);
+                        ofNotifyEvent(onUpdateEvent, *eventArgs, this);
 					}
 					break;
 					
@@ -100,10 +105,10 @@ namespace Tween
 					if(startTime <= t)
 					{
 						state = TWEEN_STARTED;
-						
-						updateValue(startTime, endTime, t);
+                        updateValue(startTime, endTime, t);
 						
 						if(onStart != NULL)	onStart(this);
+                        ofNotifyEvent(onStartEvent, *eventArgs, this);
 					}
 					
 					break;
@@ -140,10 +145,18 @@ namespace Tween
 			
 			return this;
 		}
+        
+        Tween* setDuration(float d){
+            if (state == TWEEN_STARTED){
+                endTime = startTime + d;
+            }
+            duration = d;
+            
+            return this;
+        }
 		
 		Tween* restart()
 		{
-			float duration = endTime - startTime;
 			startTime = bLoop ? endTime : ofGetElapsedTimeMillis();
 			endTime = startTime + duration;
 			
@@ -206,6 +219,24 @@ namespace Tween
 			return this;
 		}
         
+        template <typename ArgumentsType, class ListenerClass>
+        Tween* addUpdateListener(ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+            ofAddListener(onUpdateEvent, listener, listenerMethod, prio);
+            return this;
+        }
+        
+        template <typename ArgumentsType, class ListenerClass>
+        Tween* addStartListener(ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+            ofAddListener(onStartEvent, listener, listenerMethod, prio);
+            return this;
+        }
+        
+        template <typename ArgumentsType, class ListenerClass>
+        Tween* addCompleteListener(ListenerClass  * listener, void (ListenerClass::*listenerMethod)(ArgumentsType&), int prio=OF_EVENT_ORDER_AFTER_APP){
+            ofAddListener(onCompleteEvent, listener, listenerMethod, prio);
+            return this;
+        }
+        
         Tween* addChained(Tween* tween){
             _chainedTweens.push_back(tween);
             return this;
@@ -213,6 +244,16 @@ namespace Tween
         
         Tween* clearChained(){
             _chainedTweens.clear();
+            return this;
+        }
+        
+        Tween* dontDelete(){
+            bKill = false;
+            return this;
+        }
+        
+        Tween* doDelete(){
+            bKill = true;
             return this;
         }
     };
@@ -241,6 +282,7 @@ namespace Tween
             bYoYo = false;
             bKill = true;
             bFinished = false;
+            eventArgs = new TweenEventArgs();
         }
         
         void reachedEnd(){
@@ -252,6 +294,7 @@ namespace Tween
             
             //callbacks
             if(onComplete != NULL)	onComplete(this);
+            ofNotifyEvent(onCompleteEvent, *eventArgs, this);
             if(bYoYo)	swap(startVal, endVal);
             if(bLoop)	restart();
         }
@@ -297,6 +340,7 @@ namespace Tween
 		T value;
 		float (*ease)(float);
 	};
+<<<<<<< HEAD
     
 	
 	
@@ -466,3 +510,8 @@ namespace Tween
 		vector< Tween* > tweens;
 	};
 }
+=======
+}
+
+#include "TweenManager.h"
+>>>>>>> pr/3
