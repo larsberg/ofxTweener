@@ -87,11 +87,30 @@ void ofApp::draw()
 	
 	//	draw a sphere at the current value
 	ofSetColor(255,255, 0);
-	ofDrawSphere( crv->getProgress() * 400, crv->getValue(), 10, 4);
+	ofDrawSphere( crv->getProgress() * 400, crv->getValue(), 10, 5);
 	
 	ofPopMatrix();
 	
 }
+
+//TWEEN EVENTS
+
+
+void ofApp::onComplete(void* tween)
+{
+	cout << "tween has completed!" << endl;
+}
+
+
+void ofApp::onUpdateFloatCurve(void* tween)
+{
+	if(ofGetElapsedTimef() < 10)
+	{
+		auto t = (Tween::TweenCurve<float>*)tween;
+		cout << "TweenCurve is updating and it's value is " << t->getValue() << endl;
+	}
+}
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)

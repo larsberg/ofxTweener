@@ -15,6 +15,8 @@
 
 namespace Tween
 {
+	typedef float (*EaseFunc)(float t);
+	
     class TweenManager;
     
 	enum TweenState
@@ -71,7 +73,8 @@ namespace Tween
         ofEvent<TweenEventArgs> onStartEvent;
         TweenEventArgs* eventArgs;
 		
-		float (*ease)(float);
+//		float (*ease)(float);
+		EaseFunc ease;
 		
 		//this can be handy in custom callbacks
 		void* userPointer;
@@ -178,16 +181,26 @@ namespace Tween
 			return this;
 		}
 		
-		Tween* setEase(float (*e)(float))
+		Tween* setEase(EaseFunc e)
 		{
 			ease = e;
 			return this;
+		}
+		
+		EaseFunc getEase()
+		{
+			return ease;
 		}
 		
 		Tween* setAutoKill(bool bAutoKill)
 		{
 			bKill = bAutoKill;
 			return this;
+		}
+		
+		bool getAutoKill()
+		{
+			return bKill;
 		}
         
         virtual void* getTarget(){return NULL;}
@@ -351,7 +364,7 @@ namespace Tween
         friend TweenManager;
 		
 	public:
-		TweenCurve(T* _target, T _startVal, T _endVal, float _delay, float _duration, float(*_ease)(float)=Ease::Linear)
+		TweenCurve(T* _target, T _startVal, T _endVal, float _delay, float _duration, EaseFunc _ease = Ease::Linear)
 		{
             target = _target;
             startVal = _startVal;
@@ -380,7 +393,7 @@ namespace Tween
 			sort(controlPoints.begin(), controlPoints.end(), ControlPoint<T>::compareControlPoints);
 		}
 		
-		void addPoint(float u, T value, float(*_ease)(float))
+		void addPoint(float u, T value, EaseFunc _ease)
 		{
 			controlPoints.push_back(ControlPoint<T>(u, value, _ease));
 			sort(controlPoints.begin(), controlPoints.end(), ControlPoint<T>::compareControlPoints);
