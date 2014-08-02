@@ -169,6 +169,12 @@ namespace Tween
 			ease = e;
 			return this;
 		}
+		
+		Tween* setAutoKill(bool bAutoKill)
+		{
+			bKill = bAutoKill;
+			return this;
+		}
         
         virtual void* getTarget(){return NULL;}
 		
