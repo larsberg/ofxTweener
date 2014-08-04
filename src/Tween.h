@@ -15,7 +15,7 @@
 
 namespace Tween
 {
-	typedef float (*EaseFunc)(float t);
+	typedef float (*EaseFunc)(float);
 	
     class TweenManager;
     
@@ -61,9 +61,16 @@ namespace Tween
         }
 		
 	public:
-		Tween():
-		ease(Ease::Linear)
-		{}
+		Tween(EaseFunc _ease=Ease::Linear):
+		ease(_ease)
+		{
+			
+		}
+		
+		~Tween()
+		{
+			// TODO:: remove listeners
+		}
 		
 		void (*onStart)(void* _tween);
 		void (*onUpdate)(void* _tween);
@@ -73,7 +80,6 @@ namespace Tween
         ofEvent<TweenEventArgs> onStartEvent;
         TweenEventArgs* eventArgs;
 		
-//		float (*ease)(float);
 		EaseFunc ease;
 		
 		//this can be handy in custom callbacks
@@ -82,6 +88,7 @@ namespace Tween
 		void update(float t)
 		{
             bFinished = false;
+			
 			//handle states
 			switch (state)
 			{
@@ -280,8 +287,10 @@ namespace Tween
 		T startVal, endVal, value;
 		T* target;
         
-		TweenItem(T* _target, T _startVal, T _endVal, float _delay, float _duration)
+		TweenItem(T* _target, T _startVal, T _endVal, float _delay, float _duration, EaseFunc _ease=Ease::Linear) :
+		Tween(_ease)
 		{
+			ease = _ease;
             target = _target;
             startVal = _startVal;
             endVal = _endVal;
@@ -296,7 +305,7 @@ namespace Tween
             bYoYo = false;
             bKill = true;
             bFinished = false;
-            eventArgs = new TweenEventArgs();
+            eventArgs = new TweenEventArgs(this);
         }
         
         void reachedEnd(){
@@ -354,8 +363,6 @@ namespace Tween
 		T value;
 		float (*ease)(float);
 	};
-    
-	
 	
 	
 	template<class T>
@@ -385,6 +392,8 @@ namespace Tween
             bKill = true;
             bFinished = false;
 			ease = _ease;
+			
+            eventArgs = new TweenEventArgs(this);
         }
 		
 		void addPoint(float u, T value)

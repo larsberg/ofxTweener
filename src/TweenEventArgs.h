@@ -7,15 +7,19 @@
 //
 
 #pragma once
+#include "ofMain.h"
 
-namespace Tween{
-    
-    class TweenEventArgs
-    {
-    public:
-//        TweenEventArgs(Tween* t){
-//            tween = t;
-//        }
-//        Tween* tween;
-    };
+namespace Tween
+{
+	class Tween;
+	
+	class TweenEventArgs
+	{
+	public:
+		TweenEventArgs(Tween* t=NULL)
+		{
+			tween = t;
+		}
+		Tween* tween;
+	};
 }

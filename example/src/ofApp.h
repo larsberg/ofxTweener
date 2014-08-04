@@ -26,15 +26,11 @@ public:
 	static void onUpdateFloatCurve(void* tween);
 	
 	//ofEvent callbacks
+	void onCompleteEvent(Tween::TweenEventArgs& e)
+	{
+		cout << "onCompleteEvent" << endl;
+	}
 	
-//	void onCompleteEvent(Tween::of)
-//	{
-//		if (e.key == ' ')
-//		{
-//			nextGoal(this);
-//		}
-//	}
-//	
 
 	Tween::TweenManager tweens;
 	

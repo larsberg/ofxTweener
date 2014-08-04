@@ -12,6 +12,8 @@ void ofApp::setup()
 	auto t = tweens.addTween(&c, ofColor(0,0,0, 5), ofColor(155, 5), 3000, 100, Tween::Ease::Bounce::Out)->yoyo()->loop();
 	t->setOnComplete(onComplete);
 	
+	t->addCompleteListener(this, &ofApp::onCompleteEvent);
+	
 	//circling balls
 	colors.resize(100);
 	positions.resize(colors.size());
@@ -46,6 +48,10 @@ void ofApp::setup()
 		float sample = crv->sample(step * i);
 		curveLine.addVertex(ofVec3f(i, sample, 10));
 	}
+	
+//	crv->addCompleteListener(this, &ofApp::onCompleteEvent);
+	
+//	ofAddListener(ofEvents().keyPressed, this, &AnimationManager::keyPressed);
 }
 
 //--------------------------------------------------------------
@@ -111,6 +117,11 @@ void ofApp::onUpdateFloatCurve(void* tween)
 	}
 }
 
+////ofEvent callbacks
+//void onCompleteEvent(Tween::TweenEventArgs& e)
+//{
+//	cout << "ofEvent on complete" << endl;
+//}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
