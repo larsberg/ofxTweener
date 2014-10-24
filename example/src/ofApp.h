@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "Tween.h"
+#include "Tweener.h"
 
 class ofApp : public ofBaseApp
 {
@@ -26,13 +26,13 @@ public:
 	static void onUpdateFloatCurve(void* tween);
 	
 	//ofEvent callbacks
-	void onCompleteEvent(Tween::TweenEventArgs& e)
+	void onCompleteEvent(Tween::EventArgs& e)
 	{
 		cout << "onCompleteEvent" << endl;
 	}
 	
 
-	Tween::TweenManager tweens;
+	Tween::Manager tweenManager;
 	
 	float f0, f1;
 	ofColor c, ballColor;
@@ -43,6 +43,5 @@ public:
 	vector<ofColor> colors;
 	vector<ofVec3f> positions;
 	
-	Tween::TweenCurve<float>* crv;
 	ofPolyline curveLine;
 };
