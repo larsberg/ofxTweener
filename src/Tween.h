@@ -9,7 +9,6 @@
 #include "ofMain.h"
 #include "Easings.h"
 
-
 namespace Tween
 {
 	//TYPES
@@ -115,6 +114,7 @@ namespace Tween
 		EaseFunc ease;
 		bool persist, bReverse;
 		int repeatCount;
+		float startDelay;
 
 		//	callbacks
 		void (*_onStart)(void* _tween);

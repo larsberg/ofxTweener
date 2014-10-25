@@ -8,8 +8,10 @@ void ofApp::setup()
 	ofSetDepthTest(true);
 	
 	//background
-	c.set(70, 255, 90);
-	auto t = tweenManager.addTween( c, ofColor(155,5), 3000, 100, Tween::Ease::Bounce::Out);
+	c.set(70, 255, 90, 10);
+	auto t = tweenManager.addTween( c, ofColor(255,10), 3000, 100, Tween::Ease::Bounce::Out);
+	t->loop();
+	t->yoyo();
 	
 	t->addCompleteListener(this, &ofApp::onCompleteEvent);
 	
@@ -20,17 +22,20 @@ void ofApp::setup()
 	for(int i=0; i<positions.size(); i++)
 	{
 		//position
-		float speed = ofRandom(200, 2000);
+		float speed = ofRandom(500., 5000.);
 		positions[i].x = i * 80 - (positions.size() * .5 * 80.);
-//		tweenManager.addTween( positions[i].y, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut);
-		tweenManager.addTween(&positions[i].y, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop();
-		tweenManager.addTween(&positions[i].z, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop()->delayStart(speed * .5);
+		positions[i].y = -200;
+		positions[i].z = -200;
+		
+		tweenManager.addTween(positions[i].y, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop()->start();
+		tweenManager.addTween(positions[i].z, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop()->delayStart(speed * .5)->start()
+		;
 		
 		//color
 		colors[i].set(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255);
 		tweenManager.addTween(&colors[i],
-						ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255),
-						ofRandom(400, 2000))->setRepeat()->yoyo();
+							  ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255),
+							  ofRandom(400, 2000))->loop()->start()->yoyo();
 	}
 }
 
