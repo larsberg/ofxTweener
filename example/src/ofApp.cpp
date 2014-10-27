@@ -8,8 +8,8 @@ void ofApp::setup()
 	ofSetDepthTest(true);
 	
 	//background
-	c.set(70, 255, 90, 10);
-	auto t = tweenManager.addTween( c, ofColor(255,10), 3000, 100, Tween::Ease::Bounce::Out);
+	c.set(70, 190, 255, 30);
+	auto t = tweenManager.addTween( c, ofColor(255,30), 3000, 100, Tween::Ease::Bounce::Out);
 	t->loop();
 	t->yoyo();
 	
@@ -47,7 +47,7 @@ void ofApp::update()
 void ofApp::draw()
 {
 	glClear( GL_DEPTH_BUFFER_BIT );
-	ofBackgroundGradient(ofFloatColor(0.1,0.11,0.13,.05), ofFloatColor(0,0,0,.05));
+	ofBackgroundGradient(c, ofFloatColor(0,0,0,.05));
 	
 	camera.begin();
 	
