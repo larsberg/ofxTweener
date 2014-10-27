@@ -27,9 +27,8 @@ void ofApp::setup()
 		positions[i].y = -200;
 		positions[i].z = -200;
 		
-		tweenManager.addTween(positions[i].y, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop()->start();
-		tweenManager.addTween(positions[i].z, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop()->delayStart(speed * .5)->start()
-		;
+		tweenManager.addTween(positions[i].y, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop();
+		tweenManager.addTween(positions[i].z, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop()->pause(speed * .5);
 		
 		//color
 		colors[i].set(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255);

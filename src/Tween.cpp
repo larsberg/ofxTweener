@@ -20,12 +20,11 @@ namespace Tween
 	_onUpdate(NULL),
 	_onComplete(NULL),
 	userPointer(NULL),
-	state(TWEEN_STOPPED),
+	state(TWEEN_IDLE),
 	persist(false),
 	repeatCount(0),
 	bReverse(false),
-	eventArgs(shared_ptr<EventArgs>(new EventArgs(this))),
-	startDelay(0)
+	eventArgs(shared_ptr<EventArgs>(new EventArgs(this)))
 	{}
 	
 	Tween* Tween::onStart(void(*onStartFunc)(void* tween))
@@ -53,11 +52,12 @@ namespace Tween
 	}
 	
 	Tween* Tween::start()
-	{
-		startTime = ofGetElapsedTimeMillis() + delay + startDelay;
+	{	
+		startTime = ofGetElapsedTimeMillis() + delay;
 		endTime = startTime + duration;
 		state = TWEEN_IDLE;
-		startDelay = 0;
+		
+		ofNotifyEvent(onStartEvent, *eventArgs, this);
 		
 		return this;
 	}
@@ -72,14 +72,8 @@ namespace Tween
 			c->unpause();
 		}
 		
-		return this;
-	}
-	
-	Tween* Tween::delayStart(float t)
-	{
-		startDelay = t;
-//		startTime += t;
-//		endTime += t;
+		ofNotifyEvent(onCompleteEvent, *eventArgs, this);
+		
 		return this;
 	}
 	
@@ -88,8 +82,6 @@ namespace Tween
 		startTime = ofGetElapsedTimeMillis() - pauseTime;
 		endTime = startTime + duration;
 		state = TWEEN_IDLE;
-		
-		return this;
 	}
 	
 	Tween* Tween::pause()
@@ -99,6 +91,18 @@ namespace Tween
 			pauseTime = ofGetElapsedTimeMillis() - startTime - delay;
 			state = TWEEN_PAUSED;
 		}
+		
+		return this;
+	}
+	
+	
+	Tween* Tween::pause(float pauseTime)
+	{
+		pause();
+		unpause();
+		
+		startTime += pauseTime;
+		endTime += pauseTime;
 		
 		return this;
 	}
@@ -116,11 +120,15 @@ namespace Tween
 		return this;
 	}
 	
-	
-	Tween* Tween::setRepeat(int count)
+	Tween* Tween::setRepeat(int count )
 	{
 		repeatCount = count;
 		return this;
+	}
+	
+	Tween* Tween::loop(int count )
+	{
+		return setRepeat(count);
 	}
 	
 	Tween* Tween::yoyo(bool bYoyo)
@@ -138,6 +146,7 @@ namespace Tween
 				
 				if(startTime <= t)
 				{
+					
 					//set the state
 					state = TWEEN_STARTED;
 			

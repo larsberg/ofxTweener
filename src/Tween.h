@@ -9,6 +9,7 @@
 #include "ofMain.h"
 #include "Easings.h"
 
+
 namespace Tween
 {
 	//TYPES
@@ -81,15 +82,13 @@ namespace Tween
 		
 		Tween* pause();
 		
-		Tween* unpause();
+		Tween* pause(float pauseTime);
 		
-		Tween* delayStart(float t);
+		Tween* unpause();
 		
 		Tween* setRepeat(int count = -1 );
 		
-		Tween* loop(int count = -1 ){
-			return setRepeat(count);
-		}
+		Tween* loop(int count = -1 );
 		
 		Tween* yoyo(bool bYoyo=true);
 		
@@ -114,7 +113,6 @@ namespace Tween
 		EaseFunc ease;
 		bool persist, bReverse;
 		int repeatCount;
-		float startDelay;
 
 		//	callbacks
 		void (*_onStart)(void* _tween);
@@ -125,6 +123,7 @@ namespace Tween
 		ofEvent<EventArgs> onCompleteEvent;
 		ofEvent<EventArgs> onUpdateEvent;
 		ofEvent<EventArgs> onStartEvent;
+		
 		vector<void*> updateListeners;
 		vector<void*> updateMethods;
 		
