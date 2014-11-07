@@ -41,6 +41,19 @@ namespace Tween
 		return a * (1. - k) + b * k; //	a + k * (b - a) was giving an error for ofColor...
 	}
 	
+	template<class T>
+	static T mapLinear(T x, T a1, T a2, T b1, T b2, bool clamp = true )
+	{
+		T denom = a2 - a1;
+		if(denom == 0)	return b1;
+		
+		T val = b1 + ( x - a1 ) * ( b2 - b1 ) / ( a2 - a1 );
+		
+		if(clamp)	val = max(b1, min(b2, val));
+		
+		return val;
+	};
+	
 	//TWEEN
 	class Tween
 	{

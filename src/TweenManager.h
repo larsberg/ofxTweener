@@ -75,6 +75,11 @@ namespace Tween
 			}
 		}
 		
+		void clear()
+		{
+			tweens.clear();
+		}
+		
 		shared_ptr<Tween> getTween(void* target)
 		{
 			for(auto& i: tweens)

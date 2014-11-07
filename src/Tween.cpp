@@ -20,7 +20,7 @@ namespace Tween
 	_onUpdate(NULL),
 	_onComplete(NULL),
 	userPointer(NULL),
-	state(TWEEN_IDLE),
+	state(TWEEN_PAUSED),
 	persist(false),
 	repeatCount(0),
 	bReverse(false),
@@ -155,7 +155,7 @@ namespace Tween
 					startItem();
 
 					//update the values
-					progress = ofMap(t, startTime, endTime, 0, 1, true);
+					progress = mapLinear(t, startTime, endTime, 0.f, 1.f);
 					updateValue();
 					
 					//callback
@@ -166,7 +166,7 @@ namespace Tween
 				
 			case TWEEN_STARTED:
 
-				progress = ofMap(t, startTime, endTime, 0, 1, true);
+				progress = mapLinear(t, startTime, endTime, 0.f, 1.f, true);
 				
 				updateValue();
 				
