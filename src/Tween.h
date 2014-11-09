@@ -60,6 +60,7 @@ namespace Tween
 	public:
 		Tween(float duration, float delay, EaseFunc ease);
 		
+		//TODO: swap out void* with Tween*
 		Tween* onStart(void(*onStartFunc)(void* tween));
 		
 		Tween* onUpdate(void(*onUpdateFunc)(void* tween));

@@ -27,6 +27,10 @@ namespace Tween
 			return 1;
 		}
 		
+		static float Floor(float k)
+		{
+			return floor(k);
+		}
 		
 		namespace Quadratic
 		{

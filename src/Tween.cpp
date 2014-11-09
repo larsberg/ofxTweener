@@ -69,7 +69,8 @@ namespace Tween
 
 		for(auto& c: chains)
 		{
-			c->unpause();
+			//c->unpause();
+			c->start();
 		}
 		
 		ofNotifyEvent(onCompleteEvent, *eventArgs, this);
@@ -96,13 +97,13 @@ namespace Tween
 	}
 	
 	
-	Tween* Tween::pause(float pauseTime)
+	Tween* Tween::pause(float pauseDuration)
 	{
 		pause();
 		unpause();
 		
-		startTime += pauseTime;
-		endTime += pauseTime;
+		startTime += pauseDuration;
+		endTime += pauseDuration;
 		
 		return this;
 	}
