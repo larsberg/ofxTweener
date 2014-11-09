@@ -159,6 +159,7 @@ namespace Tween
 					updateValue();
 					
 					//callback
+					if(_onStart != NULL)	_onStart((void*)this);
 					if(_onUpdate != NULL)	_onUpdate((void*)this);
 				}
 				
@@ -188,7 +189,6 @@ namespace Tween
 						
 						handleRepeat();
 					}
-					
 				}
 				
 				break;

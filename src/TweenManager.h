@@ -52,7 +52,7 @@ namespace Tween
 			update(ofGetElapsedTimeMillis());
 		}
 		
-		void update(float t)
+		void update(float t = ofGetElapsedTimeMillis())
 		{
 			for(auto it = tweens.begin(); it != tweens.end(); it++)
 			{

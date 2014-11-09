@@ -204,4 +204,56 @@ namespace Tween
 		T value, startVal, endVal;
 		T* ptr;
 	};
+	
+	template<>
+	class TweenItem<bool> : public Tween
+	{
+	public:
+		TweenItem( bool& target, bool endVal, float duration, float delay = 0, EaseFunc ease=Ease::Linear) :
+		Tween(duration, delay, ease),
+		ptr( &target ),
+		endVal( endVal ),
+		startVal(target)
+		{}
+		
+		void updateValue()
+		{
+//			value = lerp(startVal, endVal, ease(progress));
+			if(progress == 1) value = endVal;
+			if(ptr != NULL)	*ptr = value;
+		}
+		
+		void startItem()
+		{
+			if(ptr != NULL)	startVal = *ptr;
+		}
+		
+		void handleRepeat()
+		{
+			if(ptr != NULL)	*ptr = startVal;
+			start();
+		}
+		
+		void reverse()
+		{
+			swap(startVal, endVal);
+		}
+		
+		void* getTarget()
+		{
+			return (void*)ptr;
+		}
+		
+		void* getItem(){
+			return (void*)this;
+		}
+		
+		bool getValue()
+		{
+			return value;
+		}
+		
+		
+		bool value, startVal, endVal, *ptr;
+	};
 }
