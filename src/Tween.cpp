@@ -139,7 +139,7 @@ namespace Tween
 	}
 	
 	
-	void Tween::update(float t )
+	void Tween::update( float t )
 	{
 		switch (state)
 		{

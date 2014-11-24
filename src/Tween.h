@@ -129,6 +129,7 @@ namespace Tween
 		int repeatCount;
 
 		//	callbacks
+		//TODO: switch form void to Tween* pointers
 		void (*_onStart)(void* _tween);
 		void (*_onUpdate)(void* _tween);
 		void (*_onComplete)(void* _tween);
