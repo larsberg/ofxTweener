@@ -90,7 +90,7 @@ namespace Tween
 		
 		Tween* setUserPtr(void* ptr);
 		
-		Tween* start();
+		Tween* start(float initialDelay = 0);
 		
 		Tween* stop();
 		

@@ -51,9 +51,9 @@ namespace Tween
 		return this;
 	}
 	
-	Tween* Tween::start()
+	Tween* Tween::start(float initialDelay)
 	{	
-		startTime = ofGetElapsedTimeMillis() + delay;
+		startTime = ofGetElapsedTimeMillis() + delay + initialDelay;
 		endTime = startTime + duration;
 		state = TWEEN_IDLE;
 		
@@ -99,6 +99,7 @@ namespace Tween
 	
 	Tween* Tween::pause(float pauseDuration)
 	{
+		//TODO: this isn't right... we need to rework the pausing
 		pause();
 		unpause();
 		
