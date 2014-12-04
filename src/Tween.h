@@ -233,6 +233,9 @@ namespace Tween
 		void handleRepeat()
 		{
 			if(ptr != NULL)	*ptr = startVal;
+			
+			if(_onComplete != NULL)	_onComplete((void*)this);
+			
 			start();
 		}
 		

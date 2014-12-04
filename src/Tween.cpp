@@ -8,7 +8,6 @@
 
 namespace Tween
 {
-
 	Tween::Tween(float duration, float delay, EaseFunc ease) :
 	duration(duration),
 	delay(delay),
