@@ -57,7 +57,7 @@ namespace Tween
 	
 	void Manager::clear()
 	{
-		for(auto& t: tweens)	t->stop();
+//		for(auto& t: tweens)	t->stop();
 		
 		tweens.clear();
 	}
