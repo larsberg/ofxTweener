@@ -69,7 +69,7 @@ namespace Tween
 		for(auto& c: chains)
 		{
 			//c->unpause();
-			c->start();
+			if(c != NULL)	c->start();
 		}
 		
 		ofNotifyEvent(onCompleteEvent, *eventArgs, this);
