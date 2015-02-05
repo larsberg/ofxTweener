@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "Tweener.h"
+#include "TweenManager.h"
 
 class ofApp : public ofBaseApp
 {
@@ -21,27 +21,36 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 	
-	//static tween event callbacks
-	static void onComplete(void* tween);
-	static void onUpdateFloatCurve(void* tween);
-	
-	//ofEvent callbacks
-	void onCompleteEvent(Tween::EventArgs& e)
+	static void onStart(void* ptr)
 	{
-		cout << "onCompleteEvent" << endl;
+		cout <<"on start! " << ofGetElapsedTimef() << endl;
 	}
 	
-
-	Tween::Manager tweenManager;
+	static void onUpdate(void* ptr)
+	{
+		cout <<"on update: " << ofGetElapsedTimef() << endl;
+	}
 	
-	float f0, f1;
-	ofColor c, ballColor;
-	ofVec3f position;
+	static void onComplete(void* ptr)
+	{
+		cout <<"on complete: " << ofGetElapsedTimef() << endl;
+		int& counter = (int&)(*ptr);
+		counter++;
+	}
 	
+	ofColor c;
+	int count;
 	ofEasyCam camera;
 	
 	vector<ofColor> colors;
 	vector<ofVec3f> positions;
 	
-	ofPolyline curveLine;
+//	ofPolyline curveLine;
+	
+
+	ofFloatColor backgroundColor;
+	
+	TWEEN::Manager manager;
+	
+	TWEEN::Tween* backgroundTween;
 };

@@ -1,20 +1,41 @@
 //
 //  Easings.h
+//  example
 //
-//  Created by lars berg on 7/6/14.
+//  Created by lars berg on 2/4/15.
+//
 //
 
 #pragma once
 
 #include "ofMain.h"
 
-namespace Tween
+namespace TWEEN
 {
+	//UTILS
+	template<class T>
+	static T lerp(T a, T b, float k)
+	{
+		return a * (1. - k) + b * k; //	a + k * (b - a) was giving an error for ofColor...
+	}
+	
+	template<class T>
+	static T mapLinear( T x, T a1, T a2, T b1, T b2 )
+	{
+		if(a2 == a1)	return b1;
+		
+		return b1 + ( x - a1 ) * ( b2 - b1 ) / (a2 - a1);
+	}
+	
+	//
+	typedef float (*EaseFunc)(float);
+	
+	//EASE
 	namespace Ease
 	{
 		static float Linear(float k)
 		{
-			return ofClamp(k,0,1);
+			return CLAMP(k,0,1);
 		}
 		
 		static float Zero(float k)

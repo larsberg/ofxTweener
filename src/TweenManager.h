@@ -1,54 +1,89 @@
 //
-//  TweenManager.h
+//  Manager.h
+//  example
 //
-//  Created by lars berg on 10/24/14.
+//  Created by lars berg on 2/5/15.
 //
+//
+
 #pragma once
 
-#include "ofMain.h"
+#include "TweenItem.h"
 
-#include "Tween.h"
-
-namespace Tween
-{	
+namespace TWEEN
+{
 	class Manager
 	{
 	public:
-		Manager();
-		~Manager();
+		
+		Manager()
+		{
+			ofAddListener(ofEvents().update, this, &Manager::update);
+		}
+		~Manager()
+		{}
 		
 		template<class T>
-		static shared_ptr<Tween> makeTween(T& target, T endVal, float duration = 1000, float delay = 0, EaseFunc ease=Ease::Linear)
+		static shared_ptr<Tween> makeTween(T& target, T startVal, T endVal, float duration = 1000, float delay = 0, EaseFunc ease=Ease::Linear)
 		{
-			return shared_ptr<Tween>(new TweenItem<T>(target, endVal, duration, delay, ease));
+			return shared_ptr<Tween>( new TweenItem<T>( &target, startVal, endVal, duration, delay, ease) );
 		}
 		
 		template<class T>
 		shared_ptr<Tween> addTween(T& target, T endVal, float duration = 1000, float delay = 0, EaseFunc ease=Ease::Linear)
 		{
-			auto t = makeTween( target, endVal, duration, delay, ease);
+			auto t = makeTween( target, target, endVal, duration, delay, ease);
 			return addTween(t);
 		}
 		
+		
 		template<class T>
-		shared_ptr<Tween> addTween(T* target, T startVal, T endVal, float duration, float delay, EaseFunc ease=Ease::Linear)
+		shared_ptr<Tween> addTween(T& target, T startVal, T endVal, float duration, float delay, EaseFunc ease)
 		{
-			return addTween(*target, startVal, endVal, duration, delay, ease);
+			auto t = makeTween( target, startVal, endVal, duration, delay, ease);
+			return addTween(t);
 		}
 		
-		shared_ptr<Tween> addTween(shared_ptr<Tween> t);
+		shared_ptr<Tween> addTween(shared_ptr<Tween> t)
+		{
+			tweens.push_back(t);
+			return t;// &(*t);
+		}
 		
-		void update(ofEventArgs& e);
+		void update(ofEventArgs& e)
+		{
+			update( tweenTimeFunc() );
+		}
+
+		void update(float t)
+		{
+			for(auto it = tweens.begin(); it != tweens.end(); it++)
+			{
+				(*it)->update(t);
+				
+				//remove stopped tweens
+				if( (*it)->getCompleted() && (*it)->getDeleteOnComplete() )
+				{
+					cout << "tweens.erase(it);: " << endl;
+					tweens.erase(it);
+				}
+			}
+		}
 		
-		void update(float t = ofGetElapsedTimeMillis());
+		void remove(shared_ptr<Tween> t)
+		{
+			auto tIt = find( tweens.begin(), tweens.end(), t );
+			if(tIt != tweens.end())
+			{
+				tweens.erase( tIt );
+			}
+		}
 		
-		void remove(shared_ptr<Tween> t);
-		
-		void clear();
-		
-		shared_ptr<Tween> getTween(void* target);
+		void clear()
+		{
+			tweens.clear();
+		}
 		
 		list< shared_ptr<Tween> > tweens;
-		int id;
 	};
 }

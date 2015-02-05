@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5006A8DF196C6EF6005B635A /* Tween.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5006A8DD196C6EF6005B635A /* Tween.cpp */; };
-		B3FED0511989CD1900B880FE /* TweenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3FED04E1989CD1900B880FE /* TweenManager.cpp */; };
+		50B3CD541A843493003CEB24 /* Tween.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50B3CD4B1A843493003CEB24 /* Tween.cpp */; };
+		50B3CD551A843493003CEB24 /* TweenCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50B3CD4D1A843493003CEB24 /* TweenCallback.cpp */; };
+		50B3CD561A843493003CEB24 /* TweenItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50B3CD501A843493003CEB24 /* TweenItem.cpp */; };
+		50B3CD571A843493003CEB24 /* TweenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50B3CD521A843493003CEB24 /* TweenManager.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -61,12 +63,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5006A8DC196C6EF6005B635A /* Easings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Easings.h; sourceTree = "<group>"; };
-		5006A8DD196C6EF6005B635A /* Tween.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tween.cpp; sourceTree = "<group>"; };
-		5006A8DE196C6EF6005B635A /* Tween.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tween.h; sourceTree = "<group>"; };
-		507E867419FAD8DE00A00051 /* Tweener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweener.h; sourceTree = "<group>"; };
-		B3FED04E1989CD1900B880FE /* TweenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TweenManager.cpp; sourceTree = "<group>"; };
-		B3FED04F1989CD1900B880FE /* TweenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweenManager.h; sourceTree = "<group>"; };
+		50B3CD4A1A843493003CEB24 /* Easings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Easings.h; sourceTree = "<group>"; };
+		50B3CD4B1A843493003CEB24 /* Tween.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tween.cpp; sourceTree = "<group>"; };
+		50B3CD4C1A843493003CEB24 /* Tween.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tween.h; sourceTree = "<group>"; };
+		50B3CD4D1A843493003CEB24 /* TweenCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TweenCallback.cpp; sourceTree = "<group>"; };
+		50B3CD4E1A843493003CEB24 /* TweenCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweenCallback.h; sourceTree = "<group>"; };
+		50B3CD4F1A843493003CEB24 /* Tweener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweener.h; sourceTree = "<group>"; };
+		50B3CD501A843493003CEB24 /* TweenItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TweenItem.cpp; sourceTree = "<group>"; };
+		50B3CD511A843493003CEB24 /* TweenItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweenItem.h; sourceTree = "<group>"; };
+		50B3CD521A843493003CEB24 /* TweenManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TweenManager.cpp; sourceTree = "<group>"; };
+		50B3CD531A843493003CEB24 /* TweenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweenManager.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -119,23 +125,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5006A8DA196C6EEB005B635A /* Tweener */ = {
+		50B3CD481A843489003CEB24 /* Tweener */ = {
 			isa = PBXGroup;
 			children = (
-				5006A8DB196C6EF6005B635A /* src */,
+				50B3CD491A843493003CEB24 /* src */,
 			);
 			name = Tweener;
 			sourceTree = "<group>";
 		};
-		5006A8DB196C6EF6005B635A /* src */ = {
+		50B3CD491A843493003CEB24 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				507E867419FAD8DE00A00051 /* Tweener.h */,
-				B3FED04E1989CD1900B880FE /* TweenManager.cpp */,
-				B3FED04F1989CD1900B880FE /* TweenManager.h */,
-				5006A8DC196C6EF6005B635A /* Easings.h */,
-				5006A8DD196C6EF6005B635A /* Tween.cpp */,
-				5006A8DE196C6EF6005B635A /* Tween.h */,
+				50B3CD4A1A843493003CEB24 /* Easings.h */,
+				50B3CD4B1A843493003CEB24 /* Tween.cpp */,
+				50B3CD4C1A843493003CEB24 /* Tween.h */,
+				50B3CD4D1A843493003CEB24 /* TweenCallback.cpp */,
+				50B3CD4E1A843493003CEB24 /* TweenCallback.h */,
+				50B3CD4F1A843493003CEB24 /* Tweener.h */,
+				50B3CD501A843493003CEB24 /* TweenItem.cpp */,
+				50B3CD511A843493003CEB24 /* TweenItem.h */,
+				50B3CD521A843493003CEB24 /* TweenManager.cpp */,
+				50B3CD531A843493003CEB24 /* TweenManager.h */,
 			);
 			name = src;
 			path = ../src;
@@ -144,7 +154,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				5006A8DA196C6EEB005B635A /* Tweener */,
+				50B3CD481A843489003CEB24 /* Tweener */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -314,10 +324,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5006A8DF196C6EF6005B635A /* Tween.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				50B3CD551A843493003CEB24 /* TweenCallback.cpp in Sources */,
+				50B3CD541A843493003CEB24 /* Tween.cpp in Sources */,
+				50B3CD571A843493003CEB24 /* TweenManager.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
-				B3FED0511989CD1900B880FE /* TweenManager.cpp in Sources */,
+				50B3CD561A843493003CEB24 /* TweenItem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,6 +364,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(OF_CORE_HEADERS)",
+					src,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
@@ -383,6 +399,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(OF_CORE_HEADERS)",
+					src,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",

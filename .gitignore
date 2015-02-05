@@ -1,31 +1,109 @@
+#########################
+# openFrameworks patterns
+#########################
 
-*/obj
-*/bin/*
-*.layout
-*.mode1v3
+# build files
+openFrameworks.a
+openFrameworksDebug.a
+openFrameworksUniversal.a
+libs/openFrameworksCompiled/lib/*/*
+!libs/openFrameworksCompiled/lib/*/.gitkeep
+
+# apothecary
+scripts/apothecary/build
+
+# rule to avoid non-official addons going into git
+# see addons/.gitignore
+addons/*
+
+# rule to avoid non-official apps going into git
+# see apps/.gitignore
+apps/*
+
+# also, see examples/.gitignore
+
+#########################
+# general
+#########################
+
+[Bb]uild/
+[Oo]bj/
+*.o
+[Dd]ebug*/
+[Rr]elease*/
+*.mode*
+*.app/
+*.pyc
+.svn/
+*.log
+*.cpp.eep
+*.cpp.elf
+*.cpp.hex
+
+#########################
+# IDE
+#########################
+
+# XCode
 *.pbxuser
-*.app
-*.xcworkspacedata
-*.xcuserstate
-*.xcscheme
-*/*.xcodeproj/xcuserdata
-*/*.xcodeproj/project.xcworkspace
-*/build/*
-.DS_Store
-Bullet-src/
+*.perspective
+*.perspectivev3
+*.mode1v3
+*.mode2v3
+# XCode 4
+xcuserdata
+*.xcworkspace
 
-# User-specific files
+# Code::Blocks
+*.depend
+*.layout
+
+# Visual Studio
+*.sdf
+*.opensdf
 *.suo
-*.user
-*.sln.docstates
-=======
+*.pdb
+*.ilk
+*.aps
+ipch/
+
+# Eclipse
+.metadata
+local.properties
+.externalToolBuilders
+
+#########################
+# operating system
+#########################
+
+# Linux
+*~
+# KDE
+.directory
+.AppleDouble
+
+# OSX
 .DS_Store
-*.app
-*.xcuserdatad
-*.xcuserstate
+*.swp
+*~.nib
+# Thumbnails
+._*
 
+# Windows
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
 
+# Android
+.csettings
+/libs/openFrameworksCompiled/project/android/paths.make
 
-*.xcuserstate
+# Android Studio
+*.iml
 
-example/example.xcodeproj/project.xcworkspace/xcuserdata/laserstorm.xcuserdatad/UserInterfaceState.xcuserstate
+#########################
+# miscellaneous
+#########################
+
+.mailmap

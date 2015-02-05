@@ -1,201 +1,188 @@
 //
-//  Tweener.cpp
+//  Tween.cpp
+//  example
 //
-//  Created by lars berg on 10/22/14.
+//  Created by lars berg on 2/4/15.
+//
 //
 
-#include "Tweener.h"
+#include "Tween.h"
 
-namespace Tween
+
+namespace TWEEN
 {
-	Tween::Tween(float duration, float delay, EaseFunc ease) :
-	duration(duration),
-	delay(delay),
-	startTime(ofGetElapsedTimeMillis() + delay),
-	endTime(startTime + duration),
-	progress(0),
-	ease(ease),
-	_onStart(NULL),
-	_onUpdate(NULL),
-	_onComplete(NULL),
-	userPointer(NULL),
-	state(TWEEN_PAUSED),
-	persist(false),
-	repeatCount(0),
-	bReverse(false),
-	eventArgs(shared_ptr<EventArgs>(new EventArgs(this)))
+	
+	Tween::Tween( float duration, float delay, EaseFunc ease) :
+	easing( ease ),
+	bStarted( false ),
+	bCompleted( false ),
+	bReverse( false ),
+	bPlaying( false ),
+	deleteOnComplete(true),
+	elapsed( 0 ),
+	repeat( 0 ),
+	_duration( duration ),
+	_delay( delay )
 	{}
 	
-	Tween* Tween::onStart(void(*onStartFunc)(void* tween))
+	Tween::~Tween()
+	{}
+	
+	Tween* Tween::clear()
 	{
-		_onStart = onStartFunc;
+		_onStart.clear();
+		_onUpdate.clear();
+		_onComplete.clear();
+		chains.clear();
+		
 		return this;
 	}
 	
-	Tween* Tween::onUpdate(void(*onUpdateFunc)(void* tween))
+	Tween* Tween::onStart(void(*onStartFunc)(void* ptr), void* user_ptr)
 	{
-		_onUpdate = onUpdateFunc;
+		_onStart.set(onStartFunc, user_ptr);
+		
 		return this;
 	}
 	
-	Tween* Tween::onComplete(void(*onCompleteFunc)(void* tween))
+	Tween* Tween::onUpdate(void(*onUpdateFunc)(void* ptr), void* user_ptr)
 	{
-		_onComplete = onCompleteFunc;
+		_onUpdate.set(onUpdateFunc, user_ptr);
+		
 		return this;
 	}
 	
-	Tween* Tween::setUserPtr(void* ptr)
+	Tween* Tween::onComplete(void(*onCompleteFunc)(void* ptr), void* user_ptr)
 	{
-		userPointer = ptr;
+		_onComplete.set(onCompleteFunc, user_ptr);
+		
 		return this;
+	}
+	
+	Tween* Tween::setEase(EaseFunc ease)
+	{
+		easing = ease;
+		
+		return this;
+	}
+	
+	Tween* Tween::autoDelete(bool _deleteOnComplete)
+	{
+		deleteOnComplete = _deleteOnComplete;
+		
+		return this;
+	}
+	
+	Tween* Tween::delay( float delayAmount )
+	{
+		startTime -= _delay;
+		_delay = delayAmount;
+		startTime += _delay;
+		endTime = startTime + _duration;
+		
+		return this;
+	}
+	
+	Tween* Tween::loop(int count)
+	{
+		repeat = count;
+		
+		return this;
+	}
+	
+	Tween* Tween::autoReverse(bool reverseOnComplete)
+	{
+		bReverse = reverseOnComplete;
+		
+		return this;
+	}
+	
+	
+	bool Tween::getDeleteOnComplete()
+	{
+		return deleteOnComplete;
+	}
+	
+	bool Tween::getCompleted()
+	{
+		return bCompleted;
 	}
 	
 	Tween* Tween::start(float initialDelay)
-	{	
-		startTime = ofGetElapsedTimeMillis() + delay + initialDelay;
-		endTime = startTime + duration;
-		state = TWEEN_IDLE;
+	{
+		bPlaying = true;
+		bCompleted = false;
 		
-		ofNotifyEvent(onStartEvent, *eventArgs, this);
+		startTime = tweenTimeFunc() + _delay + initialDelay;
+		endTime = startTime + _duration;
+		
+		cout << "tweenTimeFunc(): " << tweenTimeFunc() << endl;
+		cout << "startTime: " << startTime << endl;
+		cout << "endTime: " << endTime << endl;
 		
 		return this;
 	}
 	
-	Tween* Tween::stop()
+	void Tween::update(float t)
 	{
-		state = TWEEN_STOPPED;
-		if(_onComplete != NULL)	_onComplete((void*)this);
-
-		for(auto& c: chains)
+		//if it's not ready return
+		if ( !bPlaying || t < startTime )
 		{
-			//c->unpause();
-			if(c != NULL)	c->start();
+			return;
 		}
 		
-		ofNotifyEvent(onCompleteEvent, *eventArgs, this);
-		
-		return this;
-	}
-	
-	Tween* Tween::unpause()
-	{
-		startTime = ofGetElapsedTimeMillis() - pauseTime;
-		endTime = startTime + duration;
-		state = TWEEN_IDLE;
-	}
-	
-	Tween* Tween::pause()
-	{
-		if(state != TWEEN_PAUSED)
+		//on start callback
+		if(!bStarted)
 		{
-			pauseTime = ofGetElapsedTimeMillis() - startTime - delay;
-			state = TWEEN_PAUSED;
+			bStarted = true;
+			bCompleted = false;
+			_onStart.call();
 		}
 		
-		return this;
-	}
-	
-	
-	Tween* Tween::pause(float pauseDuration)
-	{
-		//TODO: this isn't right... we need to rework the pausing
-		pause();
-		unpause();
+		//progress
+		elapsed = (t - startTime) / _duration;
 		
-		startTime += pauseDuration;
-		endTime += pauseDuration;
-		
-		return this;
-	}
-	
-	Tween* Tween::addChain(shared_ptr<Tween> chainedTween)
-	{
-		chainedTween->pause();
-		chains.push_back( chainedTween );
-		return this;
-	}
-	
-	Tween* Tween::setPersist(bool bPersist)
-	{
-		persist = bPersist;
-		return this;
-	}
-	
-	Tween* Tween::setRepeat(int count )
-	{
-		repeatCount = count;
-		return this;
-	}
-	
-	Tween* Tween::loop(int count )
-	{
-		return setRepeat(count);
-	}
-	
-	Tween* Tween::yoyo(bool bYoyo)
-	{
-		bReverse = bYoyo;
-		return this;
-	}
-	
-	
-	void Tween::update( float t )
-	{
-		switch (state)
+		//update
+		if(!bCompleted)
 		{
-			case TWEEN_IDLE:
+			if(elapsed >= 1)
+			{
+				//complete it
+				updateValue( 1 );
+				bCompleted = true;
 				
-				if(startTime <= t)
+				//loop
+				if(repeat != 0)
 				{
+					if(repeat > 0) repeat--;
 					
-					//set the state
-					state = TWEEN_STARTED;
-			
-					// this is a virtual void that the TweenItem uses
-					// to set the startValue to the value of our target
-					startItem();
-
-					//update the values
-					progress = mapLinear(t, startTime, endTime, 0.f, 1.f);
-					updateValue();
-					
-					//callback
-					if(_onStart != NULL)	_onStart((void*)this);
-					if(_onUpdate != NULL)	_onUpdate((void*)this);
+					bStarted = bCompleted = false;
+					startTime = endTime + _delay;
+					endTime = startTime + _duration;
 				}
 				
-				break;
-				
-			case TWEEN_STARTED:
-
-				progress = mapLinear(t, startTime, endTime, 0.f, 1.f, true);
-				
-				updateValue();
-				
-				if(_onUpdate != NULL)	_onUpdate((void*)this);
-				
-				ofNotifyEvent(onUpdateEvent, *eventArgs, this);
-				
-				if(endTime <= t)
+				//autoReverse
+				if(bReverse)
 				{
-					if(repeatCount == 0)
-					{
-						stop();
-					}
-					else
-					{
-						if(bReverse)	reverse();
-						
-						if(repeatCount > 0)	repeatCount--;
-						
-						handleRepeat();
-					}
+					reverse();
 				}
 				
-				break;
-						
-			default:
-				break;
+				//start any chains
+				for(auto& c: chains)
+				{
+					cout << "c->start();" << endl;
+					c->start();
+				}
+				
+				//complete callback
+				_onComplete.call();
+			}
+			else
+			{
+				//update it
+				updateValue( easing(elapsed) );
+				_onUpdate.call();
+			}
 		}
 	}
 }

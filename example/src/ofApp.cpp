@@ -3,51 +3,51 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-
+	TWEEN::setTimeFunc( ofGetElapsedTimef );
+	
 	ofSetBackgroundAuto(false);
 	ofSetDepthTest(true);
 	
 	//background
-	c.set(70, 190, 255, 30);
-	auto t = tweenManager.addTween( c, ofColor(255,30), 3000, 100, Tween::Ease::Bounce::Out);
-	t->loop();
-	t->yoyo();
-	
-	t->addCompleteListener(this, &ofApp::onCompleteEvent);
-	
+	c.set(0, 255, 255, 5);
+	auto t = manager.addTween( c, ofColor(200, 30, 0, 5), 3, 1);
+	t->loop(3);
+	t->autoReverse();
+	t->start();
+	t->onStart(onStart, NULL);
+	t->onComplete(onComplete, &count);
+
 	//circling balls
 	colors.resize(100);
 	positions.resize(colors.size(), ofVec3f(0,-200,-200));
 	
 	for(int i=0; i<positions.size(); i++)
 	{
-		//position
-		float speed = ofRandom(500., 5000.);
+		//space them horizontally
+		float speed = ofRandom(.5, 5);
 		positions[i].x = i * 80 - (positions.size() * .5 * 80.);
-		positions[i].y = -200;
-		positions[i].z = -200;
 		
-		tweenManager.addTween(positions[i].y, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop();
-		tweenManager.addTween(positions[i].z, 200.f, speed, 0, Tween::Ease::Sinusoidal::InOut)->yoyo()->loop()->pause(speed * .5);
+		//circling positions using Sinusoidal easings
+		manager.addTween(positions[i].y, 200.f, speed, 0, TWEEN::Ease::Sinusoidal::InOut )->autoReverse()->loop()->start();
+		manager.addTween(positions[i].z, 200.f, speed, 0, TWEEN::Ease::Sinusoidal::InOut )->autoReverse()->loop()->start(speed * .5);//you can set an initial delay
 		
-		//color
+		//sphere color
 		colors[i].set(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255);
-		tweenManager.addTween(&colors[i],
-							  ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255),
-							  ofRandom(400, 2000))->loop()->start()->yoyo();
+		ofColor randomColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255);
+		float randomPeriod = ofRandom(.35, 2);
+		manager.addTween( colors[i], randomColor, randomPeriod )->start()->loop()->autoReverse();
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
-{
-}
+{}
 
 //--------------------------------------------------------------
 void ofApp::draw()
 {
 	glClear( GL_DEPTH_BUFFER_BIT );
-	ofBackgroundGradient(c, ofFloatColor(0,0,0,.05));
+	ofBackgroundGradient(c, ofFloatColor(0,0,0,.15));
 	
 	camera.begin();
 	
@@ -61,42 +61,12 @@ void ofApp::draw()
 	
 	camera.end();
 	
+	ofDisableDepthTest();
 	
-	//draw tween curve
-	ofPushMatrix();
-	ofTranslate(0, 50);
-	
-	//	background rectangle
-	ofSetColor(0, 0, 0, 30);
-	ofDrawRectangle(0,-50,400,100);
-	
-	ofPopMatrix();
+	ofSetColor(255);
+	ofDrawBitmapString( "background onComplete count: " + ofToString(count), 20, 30);
 	
 }
-
-//TWEEN EVENTS
-
-
-void ofApp::onComplete(void* tween)
-{
-	cout << "tween has completed!" << endl;
-}
-
-
-void ofApp::onUpdateFloatCurve(void* tween)
-{
-	if(ofGetElapsedTimef() < 10)
-	{
-//		auto t = (Tween::TweenCurve<float>*)tween;
-//		cout << "TweenCurve is updating and it's value is " << t->getValue() << endl;
-	}
-}
-
-////ofEvent callbacks
-//void onCompleteEvent(Tween::TweenEventArgs& e)
-//{
-//	cout << "ofEvent on complete" << endl;
-//}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
