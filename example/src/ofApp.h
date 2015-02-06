@@ -48,4 +48,6 @@ public:
 	ofFloatColor backgroundColor;
 	
 	TWEEN::Manager manager;
+	
+	bool booleanValue;
 };

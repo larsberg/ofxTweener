@@ -12,6 +12,8 @@
 	<dict>
 		<key>2760B9A7AADC17BFABC5DD36B6631A5D4B740C91</key>
 		<string>https://github.com/Larsberg/Tweener.git</string>
+		<key>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</key>
+		<string>https://github.com/openframeworks/openFrameworks.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>example/example.xcodeproj</string>
@@ -19,6 +21,8 @@
 	<dict>
 		<key>2760B9A7AADC17BFABC5DD36B6631A5D4B740C91</key>
 		<string>../../..</string>
+		<key>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</key>
+		<string>../../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/Larsberg/Tweener.git</string>
@@ -28,6 +32,14 @@
 	<string>2760B9A7AADC17BFABC5DD36B6631A5D4B740C91</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</string>
+			<key>IDESourceControlWCCName</key>
+			<string>..</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

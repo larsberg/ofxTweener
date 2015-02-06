@@ -41,6 +41,9 @@ void ofApp::setup()
 		
 		manager.addTween( colors[i], randomColor, randomPeriod )->start()->loop()->autoReverse();
 	}
+	
+	//bool
+	manager.addTween(booleanValue, false, true, 2, 0, TWEEN::Ease::Linear )->autoReverse()->loop()->start();
 }
 
 //--------------------------------------------------------------
@@ -70,6 +73,7 @@ void ofApp::draw()
 	
 	ofSetColor(255);
 	ofDrawBitmapString( "background onComplete count: " + ofToString(count), 20, 30);
+	ofDrawBitmapString( ofToString("bool: ") + (booleanValue? "true" : "false" ), 20, 50);
 	
 }
 

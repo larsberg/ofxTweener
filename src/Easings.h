@@ -19,6 +19,12 @@ namespace TWEEN
 		return a * (1. - k) + b * k; //	a + k * (b - a) was giving an error for ofColor...
 	}
 	
+	template<>
+	static bool lerp<bool>(bool a, bool b, float k)
+	{
+		return k < 1 ? a : b;
+	}
+	
 	template<class T>
 	static T mapLinear( T x, T a1, T a2, T b1, T b2 )
 	{
