@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "TweenManager.h"
+#include "Tweener.h"
 
 class ofApp : public ofBaseApp
 {
@@ -44,13 +44,8 @@ public:
 	
 	vector<ofColor> colors;
 	vector<ofVec3f> positions;
-	
-//	ofPolyline curveLine;
-	
 
 	ofFloatColor backgroundColor;
 	
 	TWEEN::Manager manager;
-	
-	TWEEN::Tween* backgroundTween;
 };

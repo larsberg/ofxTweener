@@ -11,7 +11,7 @@ void ofApp::setup()
 	//background
 	c.set(0, 255, 255, 5);
 	auto t = manager.addTween( c, ofColor(200, 30, 0, 5), 3, 1);
-	t->loop(3);
+	t->loop(11);
 	t->autoReverse();
 	t->start();
 	t->onStart(onStart, NULL);
@@ -19,22 +19,26 @@ void ofApp::setup()
 
 	//circling balls
 	colors.resize(100);
-	positions.resize(colors.size(), ofVec3f(0,-200,-200));
+	positions.resize(colors.size(), ofVec3f(0,-100,-100));
 	
+	float xSpacing = 40;
+	float xOffset = .5 * positions.size() * xSpacing;
 	for(int i=0; i<positions.size(); i++)
 	{
 		//space them horizontally
 		float speed = ofRandom(.5, 5);
-		positions[i].x = i * 80 - (positions.size() * .5 * 80.);
+		positions[i].x = i * xSpacing - xOffset;
 		
 		//circling positions using Sinusoidal easings
 		manager.addTween(positions[i].y, 200.f, speed, 0, TWEEN::Ease::Sinusoidal::InOut )->autoReverse()->loop()->start();
 		manager.addTween(positions[i].z, 200.f, speed, 0, TWEEN::Ease::Sinusoidal::InOut )->autoReverse()->loop()->start(speed * .5);//you can set an initial delay
 		
 		//sphere color
-		colors[i].set(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255);
-		ofColor randomColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255), 255);
+		ofColor randomColor( ofRandom(255), ofRandom(255), ofRandom(255), 255 );
+		colors[i].set( ofRandom(255), ofRandom(255), ofRandom(255), 255 );
+		
 		float randomPeriod = ofRandom(.35, 2);
+		
 		manager.addTween( colors[i], randomColor, randomPeriod )->start()->loop()->autoReverse();
 	}
 }
@@ -47,6 +51,7 @@ void ofApp::update()
 void ofApp::draw()
 {
 	glClear( GL_DEPTH_BUFFER_BIT );
+	
 	ofBackgroundGradient(c, ofFloatColor(0,0,0,.15));
 	
 	camera.begin();
