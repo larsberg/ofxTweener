@@ -1,4 +1,5 @@
 #Tweener v 1.0
+## a tweening lib for openframeworks
 
 Features:
 --------
