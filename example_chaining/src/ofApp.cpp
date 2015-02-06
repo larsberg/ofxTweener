@@ -5,10 +5,10 @@ void ofApp::setup()
 {
 	float w = ofGetWidth(), h = ofGetHeight();
 	
-	ofVec2f p0( w - 200, 200 );
-	ofVec2f p1( w - 200, h - 200 );
-	ofVec2f p2( 200, h - 200 );
-	ofVec2f p3( 200, 200);
+	ofVec2f p0( w - 400, 300 );
+	ofVec2f p1( w - 400, h - 300 );
+	ofVec2f p2( 400, h - 300 );
+	ofVec2f p3( 400, 300);
 	
 	auto t0 = tweenManager.addTween( pos0, p0, p1, 1, 0, TWEEN::Ease::Elastic::Out );
 	auto t1 = tweenManager.addTween( pos0, p1, p2, 1, 0, TWEEN::Ease::Elastic::Out );
@@ -34,8 +34,8 @@ void ofApp::setup()
 	color.set( ofRandom(1),ofRandom(1),ofRandom(1) );
 	auto colorTween = tweenManager.addTween(color, ofFloatColor(ofRandom(1),ofRandom(1),ofRandom(1)), 1 );
 	
-	radius = 30;
-	auto radiusTween = tweenManager.addTween(radius, 100.f, .5, 0, TWEEN::Ease::Quintic::InOut );
+	radius = 100;
+	auto radiusTween = tweenManager.addTween(radius, 200.f, .5, 0, TWEEN::Ease::Quintic::InOut );
 	
 	colorTween->addChain( radiusTween )->autoReverse()->autoDelete( false )->start();
 	radiusTween->addChain( colorTween )->autoReverse()->autoDelete( false );

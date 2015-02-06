@@ -26,6 +26,14 @@ namespace TWEEN
 		return k < 1 ? a : b;
 	}
 	
+	template<>
+	ofQuaternion lerp<ofQuaternion>(ofQuaternion a, ofQuaternion b, float k)
+	{
+		ofQuaternion q;
+		q.slerp(k, a, b);
+		return q;
+	}
+	
 	template<class T>
 	static T mapLinear( T x, T a1, T a2, T b1, T b2 )
 	{
