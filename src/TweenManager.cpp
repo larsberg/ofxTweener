@@ -17,17 +17,14 @@ namespace TWEEN
 		ofAddListener(ofEvents().update, this, &Manager::update);
 	}
 	Manager::~Manager()
-	{}
+	{
+		ofRemoveListener(ofEvents().update, this, &Manager::update);
+	}
 	
 	shared_ptr<Tween> Manager::addTween(shared_ptr<Tween> t)
 	{
 		tweens.push_back(t);
 		return t;
-	}
-	
-	void Manager::setGetCurrentTimeMethod( float (*timeFunc)() )
-	{
-		setTimeFunc( timeFunc );
 	}
 	
 	void Manager::update(ofEventArgs& e)

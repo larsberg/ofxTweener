@@ -97,6 +97,12 @@ namespace TWEEN
 		return this;
 	}
 	
+	Tween* Tween::addChain(shared_ptr<Tween> chainedTween)
+	{
+		chains.push_back( chainedTween );
+		return this;
+	}
+	
 	
 	bool Tween::getDeleteOnComplete()
 	{
@@ -115,10 +121,6 @@ namespace TWEEN
 		
 		startTime = tweenTimeFunc() + _delay + initialDelay;
 		endTime = startTime + _duration;
-		
-		cout << "tweenTimeFunc(): " << tweenTimeFunc() << endl;
-		cout << "startTime: " << startTime << endl;
-		cout << "endTime: " << endTime << endl;
 		
 		return this;
 	}
@@ -170,9 +172,14 @@ namespace TWEEN
 				//start any chains
 				for(auto& c: chains)
 				{
-					cout << "c->start();" << endl;
 					c->start();
+					if( c->getDeleteOnComplete() )
+					{
+						chains.remove( c );
+					}
 				}
+				
+				cout << "chains.size(): " << chains.size() << endl;
 				
 				//complete callback
 				_onComplete.call();

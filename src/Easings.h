@@ -11,7 +11,8 @@
 #include "ofMain.h"
 
 namespace TWEEN
-{
+{	
+	
 	//UTILS
 	template<class T>
 	static T lerp(T a, T b, float k)
@@ -20,7 +21,7 @@ namespace TWEEN
 	}
 	
 	template<>
-	static bool lerp<bool>(bool a, bool b, float k)
+	bool lerp<bool>(bool a, bool b, float k)
 	{
 		return k < 1 ? a : b;
 	}
@@ -33,10 +34,10 @@ namespace TWEEN
 		return b1 + ( x - a1 ) * ( b2 - b1 ) / (a2 - a1);
 	}
 	
-	//
+	
+	//EASES
 	typedef float (*EaseFunc)(float);
 	
-	//EASE
 	namespace Ease
 	{
 		static float Linear(float k)

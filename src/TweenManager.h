@@ -41,8 +41,6 @@ namespace TWEEN
 		
 		shared_ptr<Tween> addTween(shared_ptr<Tween> t);
 		
-		void setGetCurrentTimeMethod( float (*timeFunc)() );
-		
 		void update( ofEventArgs& e );
 
 		void update( float t );

@@ -51,11 +51,7 @@ namespace TWEEN
 		void update(float t);
 		
 		//chaining
-		Tween* addChain(shared_ptr<Tween> chainedTween)
-		{
-			chains.push_back( chainedTween );
-			return this;
-		}
+		Tween* addChain(shared_ptr<Tween> chainedTween);
 		
 		//getters
 		bool getDeleteOnComplete();

@@ -19,19 +19,21 @@ void ofApp::setup()
 
 	//circling balls
 	colors.resize(100);
-	positions.resize(colors.size(), ofVec3f(0,-100,-100));
+	positions.resize(colors.size(), ofVec3f(-100,-100,0));
 	
 	float xSpacing = 40;
 	float xOffset = .5 * positions.size() * xSpacing;
 	for(int i=0; i<positions.size(); i++)
 	{
-		//space them horizontally
+		//space them out
 		float speed = ofRandom(.5, 5);
-		positions[i].x = i * xSpacing - xOffset;
+		positions[i].z = i * xSpacing - xOffset;
 		
-		//circling positions using Sinusoidal easings
-		manager.addTween(positions[i].y, 200.f, speed, 0, TWEEN::Ease::Sinusoidal::InOut )->autoReverse()->loop()->start();
-		manager.addTween(positions[i].z, 200.f, speed, 0, TWEEN::Ease::Sinusoidal::InOut )->autoReverse()->loop()->start(speed * .5);//you can set an initial delay
+		//circling using Sinusoidal easings
+		manager.addTween(positions[i].x, 100.f, speed, 0, TWEEN::Ease::Sinusoidal::InOut )->autoReverse()->loop()->start();
+		
+		float initialDelay = speed * .5;
+		manager.addTween(positions[i].y, 100.f, speed, 0, TWEEN::Ease::Sinusoidal::InOut )->autoReverse()->loop()->start( initialDelay );
 		
 		//sphere color
 		ofColor randomColor( ofRandom(255), ofRandom(255), ofRandom(255), 255 );
