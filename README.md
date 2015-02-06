@@ -1,4 +1,4 @@
-#Tweener v 1.
+#Tweener v 1.0
 
 Features:
 --------
