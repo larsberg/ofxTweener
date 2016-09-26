@@ -107,3 +107,37 @@ Desktop.ini
 #########################
 
 .mailmap
+
+*.make
+
+*.pbxproj
+
+*.xcscheme
+
+example_chaining/Makefile
+
+*.plist
+
+*.xcconfig
+
+*.make
+
+*.pbxproj
+
+*.xcscheme
+
+*.xcscheme
+
+example/example.xcodeproj/xcshareddata/xcschemes/example Debug.xcscheme
+
+example/example.xcodeproj/xcshareddata/xcschemes/example Release.xcscheme
+
+example/Makefile
+
+*.plist
+
+*.xcconfig
+
+example/Project.xcconfig
+
+example/openFrameworks-Info.plist
