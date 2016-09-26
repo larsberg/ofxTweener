@@ -34,16 +34,18 @@ namespace TWEEN
 	
 	void Manager::update(float t)
 	{
-		for(auto it = tweens.begin(); it != tweens.end(); it++)
-		{
-			(*it)->update(t);
+		for (list< shared_ptr<Tween> >::reverse_iterator rit=tweens.rbegin(); rit!=tweens.rend(); ++rit) {
+			
+			// update the tween
+			(*rit)->update(t);
 			
 			//remove stopped tweens
-			if( (*it)->getCompleted() && (*it)->getDeleteOnComplete() )
+			if( (*rit)->getCompleted() && (*rit)->getDeleteOnComplete() )
 			{
-				tweens.erase(it);
+				tweens.remove(*rit);
 			}
 		}
+		
 	}
 	
 	void Manager::remove(shared_ptr<Tween> t)
