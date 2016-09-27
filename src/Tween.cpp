@@ -179,8 +179,6 @@ namespace TWEEN
 					}
 				}
 				
-				cout << "chains.size(): " << chains.size() << endl;
-				
 				//complete callback
 				_onComplete.call();
 			}
